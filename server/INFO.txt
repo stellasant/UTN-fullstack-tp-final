@@ -1,0 +1,25 @@
+Grupo: A
+
+
+Nro de integrantes: 6
+
+
+Integrantes:
+
+Anabella Rodriguez 
+
+Stella Maris Santamaria
+
+Luis Ezequiel Puig
+
+Rodriguo Daiqui 
+
+Fernando Plaza
+
+Julian Selemin
+
+
+
+Nombre de la base de datos:
+
+biblioteca-db
