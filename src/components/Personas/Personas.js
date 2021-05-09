@@ -3,6 +3,7 @@ import Axios from 'axios'
 import EditFormPersona from './EditFormPersona'
 import NewFormPersona from './NewFormPersona'
 import Errors from '../Message/Errors'
+import { useHistory } from 'react-router-dom'
 
 const Personas = () => {
 	const [personas, setPersonas] = useState([])
@@ -34,9 +35,11 @@ const Personas = () => {
 		handleEdit()
 	}, [])
 
+	const history = useHistory()
+
 	const handleDelete = async (id) => {
 		await Axios.delete(`http://localhost:3001/api/personas/${id}`)
-			.then((res) => console.log(res))
+			.then((res) => console.log(res), history.go(0))
 			.catch((e) => setError([e.response.data.Error])) //De esta forma accedemos al codigo de error del backend que pusimos
 	}
 
