@@ -51,7 +51,7 @@ app.get('/api/categorias/:id', async (req, res) => {
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ 'Error inesperado': e.message })
 	}
 })
 
@@ -73,35 +73,8 @@ app.post('/api/categorias', async (req, res) => {
 		query = 'INSERT INTO genero (nombre) VALUE (?)'
 		respuesta = await qy(query, [nombre])
 
-		res.send({ respuesta: respuesta.insertId })
+		res.send({ respuesta: respuesta })
 		console.log(`Se inserto correctamente la categoria ${req.body.nombre}`)
-	} catch (e) {
-		console.error(e.message)
-		res.status(413).send(e.message)
-	}
-})
-
-//PUT /categoria/:id para modificar una categoria
-app.put('/api/categorias/:id', async (req, res) => {
-	try {
-		if (!req.body.nombre) {
-			throw new Error('Complete todos los campos para modificar a una categoría') //Sino, error
-		}
-		const nombre = req.body.nombre.toUpperCase()
-
-		let query = 'SELECT * FROM genero WHERE nombre =? AND id <> ?'
-		let respuesta = await qy(query, [nombre, req.params.id])
-		if (respuesta.length > 0) {
-			throw new Error('El genero ya existe')
-		}
-
-		query = 'UPDATE genero SET nombre = ? WHERE id = ?'
-		respuesta = await qy(query, [nombre, req.params.id])
-		res.send({ respuesta: respuesta.affectedRows })
-
-		console.log(
-			`Se modificaron los datos correctamente: Nombre:${req.body.nombre}`
-		)
 	} catch (e) {
 		console.error(e.message)
 		res.status(413).send(e.message)
@@ -123,7 +96,7 @@ app.delete('/api/categorias/:id', async (req, res) => {
 		console.log(`Se eliminó correctamente el género con id ${req.params.id}`)
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ Error: e.message })
 	}
 })
 
@@ -137,16 +110,17 @@ app.get('/api/personas', async (req, res) => {
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ Error: e.message })
 	}
 })
 
 // GET /personas/:id para devolver una sola persona
 app.get('/api/personas/:id', async (req, res) => {
 	try {
-		const query = 'SELECT nombre,apellido,mail,alias FROM persona WHERE id = ?'
+		const query =
+			'SELECT id, nombre, apellido, mail, alias FROM persona WHERE id = ?'
 		const respuesta = await qy(query, [req.params.id])
-		console.log(respuesta)
+		console.log(`${respuesta}`)
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
@@ -181,7 +155,8 @@ app.post('/api/personas', async (req, res) => {
 		const mail = req.body.mail.toUpperCase()
 		const alias = req.body.alias.toUpperCase()
 
-		query = 'INSERT INTO persona (nombre, apellido, mail, alias) VALUE (?,?,?,?)'
+		query =
+			'INSERT INTO persona (nombre, apellido, mail, alias) VALUE (?,?,?,?)'
 		respuesta = await qy(query, [nombre, apellido, mail, alias])
 		res.send({ respuesta: respuesta })
 		console.log(
@@ -189,11 +164,11 @@ app.post('/api/personas', async (req, res) => {
 		)
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ 'Error inesperado': e.message })
 	}
 })
 
-// PUT /personas/:id' para modificar una persona existente
+// PUT /persona/:id' para modificar una persona existente
 app.put('/api/personas/:id', async (req, res) => {
 	try {
 		if (!req.body.nombre && !req.body.apellido && !req.body.alias) {
@@ -211,9 +186,10 @@ app.put('/api/personas/:id', async (req, res) => {
 		if (req.body.mail) {
 			throw new Error('El email no se puede modificar.')
 		} //No se puede modificar el mail pero los demás datos se actualizan
-		query = 'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?'
+		query =
+			'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?'
 		respuesta = await qy(query, [nombre, apellido, alias, req.params.id])
-		res.send({ respuesta: respuesta.affectedRows })
+		res.send({ respuesta: respuesta })
 
 		console.log(
 			`Se modificaron los datos correctamente: Nombre:${req.body.nombre} Apellido:${req.body.apellido} Alias:${req.body.alias}`
@@ -240,7 +216,7 @@ app.delete('/api/personas/:id', async (req, res) => {
 		console.log(`La persona se elimino correctamente`)
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ 'Error inesperado': e.message })
 	}
 })
 
@@ -254,7 +230,7 @@ app.get('/api/libros', async (req, res) => {
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ Error: e.message })
 	}
 })
 
@@ -271,35 +247,31 @@ app.post('/api/libros', async (req, res) => {
 			throw new Error('Ya existe un libro con ese nombre')
 		}
 
-		if (req.body.id_persona) {
-			const quer = 'SELECT nombre,apellido,mail,alias FROM persona WHERE id = ?'
-			const respuest = await qy(quer, [req.body.id_persona])
-			if (respuest.length < 1) {
-				throw new Error(
-					'La persona no existe no podemos prestarle el libro deje el campo nulo para acomodarlo en el inventario o ingrese la persona correcta'
-				)
-			}
-		}
+		// if (req.body.id_persona) {
+		//     const quer = 'SELECT nombre,apellido,mail,alias FROM persona WHERE id = ?';
+		//     const respuest = await qy(quer, [req.body.id_persona]);
+		//     if (respuest.length < 1) {
+		//         throw new Error('La persona no existe no podemos prestarle el libro deje el campo nulo para acomodarlo en el inventario o ingrese la persona correcta');
+		//     };
+		// };
 
 		const categoria = 'SELECT * FROM genero WHERE id = ?'
 		const respuestaCategoria = await qy(categoria, [req.body.id_genero])
 
 		const nombre = req.body.nombre.toUpperCase()
 		const descripcion = req.body.descripcion.toUpperCase()
-		const id_genero = req.body.id_genero.toUpperCase()
-		const id_persona = req.body.id_persona.toUpperCase()
+		const id_genero = req.body.id_genero
 
 		if (respuestaCategoria.length < 1) {
 			throw new Error('Genero inexistente')
 		}
 
-		query =
-			'INSERT INTO libros (nombre, descripcion, id_genero, id_persona) VALUE (?,?,?,?)'
-		respuesta = await qy(query, [nombre, descripcion, id_genero, id_persona])
+		query = 'INSERT INTO libros (nombre, descripcion, id_genero) VALUE (?,?,?)'
+		respuesta = await qy(query, [nombre, descripcion, id_genero])
 		res.send({ respuesta: respuesta })
 		console.log(`Se registro correctamente el libro ${req.body.nombre}`)
 	} catch (e) {
-		console.error(e.message)
+		console.log(e.message)
 		res.status(413).send(e.message)
 	}
 })
@@ -311,17 +283,17 @@ app.get('/api/libros/:id', async (req, res) => {
 			'SELECT nombre, descripcion, id_genero, id_persona FROM libros WHERE id = ?'
 		let respuesta = await qy(query, [req.params.id])
 
-		if (respuesta.length === 0) {
+		if (respuesta.length == 0) {
 			throw new Error('No existe un libro con ese id')
 		}
 
 		query =
 			'SELECT id, nombre, descripcion, id_genero, id_persona FROM libros WHERE id = ?'
 		respuesta = await qy(query, [req.params.id])
-		console.log(respuesta)
+		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ Error: e.message })
 	}
 })
 
@@ -336,12 +308,11 @@ app.put('/api/libros/:id', async (req, res) => {
 
 		let query = 'UPDATE libros SET descripcion = ? WHERE id = ?'
 		let respuesta = await qy(query, [descripcion, req.params.id])
-		console.log(respuesta)
 
 		console.log(`Se modificaron correctamente los datos del libro`)
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ 'Error inesperado': e.message })
 	}
 })
 
@@ -363,7 +334,7 @@ app.put('/api/libros/prestar/:id', async (req, res) => {
 		}
 
 		const persona = 'SELECT * FROM persona WHERE id = ?'
-		const respuestaPersona = await qy(persona, [req.params.id])
+		const respuestaPersona = await qy(persona, [req.body.id_persona])
 		if (respuestaPersona.length < 1) {
 			throw new Error('La persona no existe no podemos prestarle el libro')
 		}
@@ -374,7 +345,7 @@ app.put('/api/libros/prestar/:id', async (req, res) => {
 		if (respuesta.length > 0) {
 			query = `UPDATE libros SET id_persona = ? WHERE id = ?`
 			respuesta = await qy(query, [req.body.id_persona, req.params.id])
-			console.log('Se presto el libro correctamente')
+			res.send({ respuesta: respuesta })
 		} else {
 			throw new Error(
 				'El libro se encuentra prestado, debe aguardar su devolucion'
@@ -382,7 +353,7 @@ app.put('/api/libros/prestar/:id', async (req, res) => {
 		}
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ Error: e.message })
 	}
 })
 
@@ -407,7 +378,7 @@ app.put('/api/libros/devolver/:id', async (req, res) => {
 		}
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send(e.message)
+		res.status(413).send({ Error: e.message })
 	}
 })
 
@@ -431,6 +402,7 @@ app.delete('/api/libros/:id', async (req, res) => {
 			query = 'DELETE FROM libros WHERE id = ?'
 			respuesta = await qy(query, [req.params.id])
 			console.log(`El libro fue eliminado correctamente.`)
+			res.send({ respuesta: respuesta })
 		}
 	} catch (e) {
 		console.error(e.message)

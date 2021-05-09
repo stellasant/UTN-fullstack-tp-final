@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useHistory } from 'react-router-dom'
 
 const Libros = () => {
 	const [listalibros, setListaLibros] = useState([])
@@ -18,12 +19,16 @@ const Libros = () => {
 		id_genero: '',
 	})
 
+	const history = useHistory()
+
 	const TraerLibros = async () => {
 		try {
 			const respuestaPersonas = await axios.get(
 				'http://localhost:3001/api/personas'
 			)
-			const respuestaLibros = await axios.get('http://localhost:3001/api/libros')
+			const respuestaLibros = await axios.get(
+				'http://localhost:3001/api/libros'
+			)
 			const respuestaCategoria = await axios.get(
 				'http://localhost:3001/api/categorias'
 			)
@@ -56,11 +61,10 @@ const Libros = () => {
 	}, [])
 
 	const handleDevolver = async (id) => {
-		try {
-			await axios.put(`http://localhost:3001/api/libros/devolver/${id}`)
-		} catch (e) {
-			console.log(e)
-		}
+		await axios
+			.put(`http://localhost:3001/api/libros/devolver/${id}`)
+			.then((res) => console.log(res), history.go(0))
+			.catch((e) => console.log(e))
 	}
 
 	const handlePrestar = async (id) => {
@@ -79,19 +83,20 @@ const Libros = () => {
 		setpersonaAPrestar({ id_persona: e.target.value })
 	}
 
-	const handleSubmitPrestar = () => {
-		const respuesta = axios
+	const handleSubmitPrestar = async () => {
+		await axios
 			.put(
 				`http://localhost:3001/api/libros/prestar/${libroprestar[0].id}`,
 				personaAPrestar
 			)
-			.then((res) => console.log(res))
+			.then((res) => console.log(res), history.go(0))
 			.catch((e) => console.log(e))
 	}
 
 	const handleDelete = async (id) => {
 		try {
 			await axios.delete(`http://localhost:3001/api/libros/${id}`)
+			history.go(0)
 		} catch (e) {
 			console.log(e)
 		}
@@ -107,7 +112,7 @@ const Libros = () => {
 	const handleSubmitNew = async () => {
 		const respuesta = await axios
 			.post('http://localhost:3001/api/libros', newlibro)
-			.then((res) => console.log(res))
+			.then((res) => console.log(res), history.go(0))
 			.catch((e) => console.log(e))
 	}
 
@@ -116,7 +121,7 @@ const Libros = () => {
 			<h1>Libros:</h1>
 			<button onClick={() => setFormlibro(true)}>Agregar un Libro</button>
 			{formlibro && (
-				<form onSubmit={handleSubmitNew}>
+				<>
 					<label>Nombre</label>
 					<input
 						type='text'
@@ -138,8 +143,8 @@ const Libros = () => {
 							</option>
 						))}
 					</select>
-					<button type='submit'>Agregar Libro</button>
-				</form>
+					<button onClick={handleSubmitNew}>Agregar Libro</button>
+				</>
 			)}
 			<table>
 				<thead>
@@ -167,26 +172,37 @@ const Libros = () => {
 									<td>No</td>
 								)}
 								<td>
-									<button onClick={() => handleDevolver(unLibro.id)}>Devolver</button>
-									<button onClick={() => handlePrestar(unLibro.id)}>Prestar</button>
-									<button onClick={() => handleDelete(unLibro.id)}>Eliminar</button>
+									<button onClick={() => handleDevolver(unLibro.id)}>
+										Devolver
+									</button>
+									<button onClick={() => handlePrestar(unLibro.id)}>
+										Prestar
+									</button>
+									<button onClick={() => handleDelete(unLibro.id)}>
+										Eliminar
+									</button>
 								</td>
 							</tr>
 						))}
 				</tbody>
 			</table>
 			{selectpersona && (
-				<form>
+				<>
 					<h4>Prestar a:</h4>
 					<select onChange={handleChangePrestar}>
 						{personaprestar.map((unaPersona) => (
-							<option key={unaPersona.id} value={unaPersona.id}>
-								{unaPersona.nombre}
-							</option>
+							<>
+								<option selected disabled>
+									--Selecciona--
+								</option>
+								<option key={unaPersona.id} value={unaPersona.id}>
+									{unaPersona.nombre}
+								</option>
+							</>
 						))}
 					</select>
 					<button onClick={handleSubmitPrestar}>Prestar Libro</button>
-				</form>
+				</>
 			)}
 		</div>
 	)

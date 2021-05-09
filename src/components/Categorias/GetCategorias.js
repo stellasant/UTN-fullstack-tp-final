@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
+import { useHistory } from 'react-router-dom'
 import AddFormCategoria from './AddFormCategoria'
 
 export default function GetCategorias() {
@@ -8,6 +9,8 @@ export default function GetCategorias() {
 	const [errordelete, setErrorDelete] = useState([])
 
 	const [formAgregar, setFormAgregar] = useState(false)
+
+	const history = useHistory()
 
 	async function traerlistado() {
 		try {
@@ -24,7 +27,7 @@ export default function GetCategorias() {
 	const handleDelete = async (id) => {
 		await axios
 			.delete(`http://localhost:3001/api/categorias/${id}`)
-			.then((res) => console.log(res))
+			.then((res) => console.log(res), history.go(0))
 			.catch((e) => setErrorDelete([e.response.data.Error]))
 	}
 
@@ -43,7 +46,9 @@ export default function GetCategorias() {
 					<div key={unaCategoria.id} className='categoria'>
 						<h3>
 							{unaCategoria.nombre}
-							<button onClick={() => handleDelete(unaCategoria.id)}>Eliminar</button>
+							<button onClick={() => handleDelete(unaCategoria.id)}>
+								Eliminar
+							</button>
 						</h3>
 					</div>
 				))}

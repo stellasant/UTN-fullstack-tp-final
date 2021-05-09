@@ -1,15 +1,16 @@
 import React, { useState } from 'react'
-import Axios from 'axios'
+import axios from 'axios'
+import { useHistory } from 'react-router-dom'
 import Errors from '../Message/Errors'
 
 const EditFormPersona = ({ personaEditar }) => {
-	console.log(personaEditar)
 	const [personaedit, setpersonaEdit] = useState({
 		nombre: '',
 		apellido: '',
 		alias: '',
 	})
 	const [error, setError] = useState([])
+	const history = useHistory()
 
 	const handleChange = (e) => {
 		setpersonaEdit({
@@ -19,18 +20,17 @@ const EditFormPersona = ({ personaEditar }) => {
 	}
 
 	const handleSubmit = async (id) => {
-		await Axios.put(`http://localhost:3001/api/personas/${id}`, personaedit)
-			.then((res) => console.log(res.data.respuesta))
-			.catch((e) => {
-				return setError(e.response.data)
-			})
+		await axios
+			.put(`http://localhost:3001/api/personas/${id}`, personaedit)
+			.then((res) => console.log(res), history.go(0))
+			.catch((e) => console.log(e))
 	}
 
 	return (
 		<div>
 			{error.length > 0 && <Errors msgError={error} />}
-			{personaEditar.map((personaedit) => (
-				<div>
+			{personaEditar.map((el) => (
+				<>
 					<input
 						type='text'
 						name='nombre'
@@ -52,8 +52,8 @@ const EditFormPersona = ({ personaEditar }) => {
 						onChange={handleChange}
 						placeholder='Alias'
 					/>
-					<button onClick={handleSubmit}>Guardar</button>
-				</div>
+					<button onClick={() => handleSubmit(el.id)}>Editar</button>
+				</>
 			))}
 		</div>
 	)
