@@ -1,20 +1,31 @@
 import React, { useState, useEffect } from 'react'
-import Axios from 'axios'
+import axios from 'axios'
 import EditFormPersona from './EditFormPersona'
 import NewFormPersona from './NewFormPersona'
 import Errors from '../Message/Errors'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 
 const Personas = () => {
+	const params = useParams()
 	const [personas, setPersonas] = useState([])
 	const [error, setError] = useState([])
 	const [mostrarFormEdit, setmostrarFormEdit] = useState(false)
 	const [mostrarFormNew, setmostrarFormNew] = useState(false)
-	const [personaEditar, setPersonaEditar] = useState([])
+	const [personaEditar, setPersonaEditar] = useState([
+		{
+			nombre: '',
+			apellido: '',
+			alias: '',
+		},
+	])
 
 	const traerPersonas = async () => {
-		await Axios.get('http://localhost:3001/api/personas')
-			.then((res) => setPersonas(res.data.respuesta))
+		await axios
+			.get('http://localhost:3001/api/personas')
+			.then(
+				(res) => setPersonas(res.data.respuesta),
+				console.log('personas', (res) => res.data.respuesta)
+			)
 			.catch((e) => setError(e.response.data))
 	}
 
@@ -23,22 +34,28 @@ const Personas = () => {
 	}, [])
 
 	const handleEdit = async (id) => {
-		await Axios.get(`http://localhost:3001/api/personas/${id}`)
-			.then((res) => setPersonaEditar(res.data.respuesta))
+		await axios
+			.get(`http://localhost:3001/api/personas/${id}`)
+			.then(
+				(res) => setPersonaEditar(res.data.respuesta),
+				console.log('personaAEditar', (res) => res.data.respuesta),
+				setmostrarFormEdit(true)
+			)
 			.catch((e) => {
 				return setError([e.response.data.Error])
 			})
-		setmostrarFormEdit(true)
 	}
 
-	useEffect(() => {
-		handleEdit()
-	}, [])
+	React.useEffect(() => {
+		if (!params.id) return
+		handleEdit(params.id)
+	}, [params])
 
 	const history = useHistory()
 
 	const handleDelete = async (id) => {
-		await Axios.delete(`http://localhost:3001/api/personas/${id}`)
+		await axios
+			.delete(`http://localhost:3001/api/personas/${id}`)
 			.then((res) => console.log(res), history.go(0))
 			.catch((e) => setError([e.response.data.Error])) //De esta forma accedemos al codigo de error del backend que pusimos
 	}
@@ -59,24 +76,23 @@ const Personas = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{personas &&
-						personas.map((persona) => (
-							<tr key={persona.id}>
-								<td>{persona.nombre}</td>
-								<td>{persona.apellido}</td>
-								<td>{persona.alias}</td>
-								<td>{persona.mail}</td>
-								<td>
-									<button onClick={() => handleEdit(persona.id)}>Editar</button>
-									<button onClick={() => handleDelete(persona.id)}>Eliminar</button>
-								</td>
-							</tr>
-						))}
+					{personas.map((persona) => (
+						<tr key={persona.id}>
+							<td>{persona.nombre}</td>
+							<td>{persona.apellido}</td>
+							<td>{persona.alias}</td>
+							<td>{persona.mail}</td>
+							<td>
+								<button onClick={() => handleEdit(persona.id)}>Editar</button>
+								<button onClick={() => handleDelete(persona.id)}>Eliminar</button>
+							</td>
+						</tr>
+					))}
 				</tbody>
 			</table>
 
-			{mostrarFormEdit && <EditFormPersona personaEditar={personaEditar} />}
 			{mostrarFormNew && <NewFormPersona />}
+			{mostrarFormEdit && <EditFormPersona personaEditar={personaEditar} />}
 		</div>
 	)
 }

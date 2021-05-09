@@ -193,7 +193,7 @@ app.post('/api/personas', async (req, res) => {
 	}
 })
 
-// PUT /persona/:id' para modificar una persona existente
+// PUT /personas/:id' para modificar una persona existente
 app.put('/api/personas/:id', async (req, res) => {
 	try {
 		if (!req.body.nombre && !req.body.apellido && !req.body.alias) {
