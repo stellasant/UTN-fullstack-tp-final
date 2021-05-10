@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useHistory, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import EditFormPersona from './EditFormPersona'
 import NewFormPersona from './NewFormPersona'
 import Errors from '../Message/Errors'
@@ -26,7 +26,6 @@ const Personas = () => {
 			alias: '',
 		},
 	])
-	const history = useHistory()
 	const params = useParams()
 
 	const traerPersonas = async () => {

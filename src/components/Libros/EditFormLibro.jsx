@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
 import PropTypes from 'prop-types'
 import Errors from '../Message/Errors'
 import Success from '../Message/Success'
@@ -10,7 +9,6 @@ const EditFormLibro = (props) => {
 	const [editLibro, setEditLibro] = useState({
 		descripcion: '',
 	})
-	const history = useHistory()
 
 	const [errors, setErrors] = useState('')
 	const [success, setSuccess] = useState('')

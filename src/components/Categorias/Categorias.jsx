@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
 import NewFormCategoria from './NewFormCategoria'
 import Success from '../Message/Success'
 
@@ -16,8 +15,6 @@ const Categorias = () => {
 	const [categorias, setCategorias] = useState([])
 	const [showNewForm, setShowNewForm] = useState(false)
 
-	const history = useHistory()
-
 	const traerCategorias = async () => {
 		await axios
 			.get('http://localhost:3001/api/categorias')
@@ -32,10 +29,7 @@ const Categorias = () => {
 	const handleDelete = async (id) => {
 		await axios
 			.delete(`http://localhost:3001/api/categorias/${id}`)
-			.then(
-				(res) => setSuccess(res.data)
-				/* history.go(0) */
-			)
+			.then((res) => setSuccess(res.data))
 			.catch((e) => console.log(e))
 	}
 

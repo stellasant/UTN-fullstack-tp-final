@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { useHistory } from 'react-router-dom'
 import axios from 'axios'
 import Errors from '../Message/Errors'
 import Success from '../Message/Success'
@@ -11,7 +10,6 @@ const NewFormCategoria = () => {
 	const [newCategoria, setNewCategoria] = useState({
 		nombre: '',
 	})
-	const history = useHistory()
 
 	const handleChange = async (e) => {
 		setNewCategoria({
@@ -23,10 +21,7 @@ const NewFormCategoria = () => {
 	const handleSubmit = async () => {
 		await axios
 			.post('http://localhost:3001/api/categorias', newCategoria)
-			.then(
-				(res) => setSuccess(res.data)
-				/* history.go(0) */
-			)
+			.then((res) => setSuccess(res.data))
 			.catch((e) => setError(e.response.data))
 	}
 

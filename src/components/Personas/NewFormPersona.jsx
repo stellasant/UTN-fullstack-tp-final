@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
 import Errors from '../Message/Errors'
 import Success from '../Message/Success'
 
@@ -12,7 +11,6 @@ const NewFormPersona = () => {
 		mail: '',
 		alias: '',
 	})
-	const history = useHistory()
 	const [error, setError] = useState('')
 	const [success, setSuccess] = useState('')
 
@@ -26,7 +24,7 @@ const NewFormPersona = () => {
 	const handleSubmit = async () => {
 		await axios
 			.post('http://localhost:3001/api/personas', newPersona)
-			.then((res) => setSuccess(res.data) /* history.go(0) */)
+			.then((res) => setSuccess(res.data))
 			.catch((e) => setError(e.response.data))
 	}
 
