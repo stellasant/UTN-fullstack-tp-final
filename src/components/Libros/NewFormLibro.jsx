@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 import Errors from '../Message/Errors'
+import Success from '../Message/Success'
 
 const NewFormLibro = (props) => {
 	const { categorias } = props
@@ -10,8 +11,10 @@ const NewFormLibro = (props) => {
 		descripcion: '',
 		id_genero: '',
 	})
-	const [error, setError] = useState([])
 	const history = useHistory()
+
+	const [errors, setErrors] = useState('')
+	const [success, setSuccess] = useState('')
 
 	const handleChange = (e) => {
 		setNewlibro({
@@ -23,13 +26,15 @@ const NewFormLibro = (props) => {
 	const handleSubmit = async () => {
 		await axios
 			.post('http://localhost:3001/api/libros', newLibro)
-			.then((res) => console.log('handleSubmit:', res), history.go(0))
-			.catch((e) => console.log(e))
+			.then((res) => setSuccess(res.data))
+			.catch((e) => setErrors(e.response.data))
 	}
 
 	return (
 		<div>
 			<label>Nombre</label>
+			{errors && <Errors msgError={errors} />}
+			{success && <Success msgSuccess={success} />}
 			<input
 				type='text'
 				name='nombre'

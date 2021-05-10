@@ -4,6 +4,7 @@ import { useHistory, useParams } from 'react-router-dom'
 import EditFormPersona from './EditFormPersona'
 import NewFormPersona from './NewFormPersona'
 import Errors from '../Message/Errors'
+import Success from '../Message/Success'
 
 const Personas = () => {
 	/*
@@ -12,8 +13,10 @@ const Personas = () => {
 	 * - Modificación => Editar Persona
 	 * - Baja => Borrar Persona
 	 */
+	const [error, setError] = useState('')
+	const [success, setSuccess] = useState('')
+
 	const [personas, setPersonas] = useState([])
-	const [error, setError] = useState([])
 	const [showNewForm, setShowNewForm] = useState(false)
 	const [showEditForm, setShowEditForm] = useState(false)
 	const [personaEditar, setPersonaEditar] = useState([
@@ -29,10 +32,7 @@ const Personas = () => {
 	const traerPersonas = async () => {
 		await axios
 			.get('http://localhost:3001/api/personas')
-			.then(
-				(res) => setPersonas(res.data.respuesta),
-				(res) => console.log('setPersonas:', res.data.respuesta)
-			)
+			.then((res) => setPersonas(res.data.respuesta))
 			.catch((e) => setError(e.response.data))
 	}
 
@@ -45,12 +45,12 @@ const Personas = () => {
 			.get(`http://localhost:3001/api/personas/${id}`)
 			.then(
 				(res) => setPersonaEditar(res.data.respuesta),
-				(res) => console.log('setPersonaEditar:', res.data.respuesta),
 				setShowEditForm(true)
 			)
-			.catch((e) => {
-				return setError([e.response.data])
-			})
+			.catch(
+				(e) => console.log(e),
+				(e) => setError(e.response.data)
+			)
 	}
 
 	useEffect(() => {
@@ -61,15 +61,16 @@ const Personas = () => {
 	const handleDelete = async (id) => {
 		await axios
 			.delete(`http://localhost:3001/api/personas/${id}`)
-			.then((res) => console.log('handleDelete:', res), history.go(0))
-			.catch((e) => setError(e.response.data)) //De esta forma accedemos al codigo de error del backend que pusimos
+			.then((res) => setSuccess(res.data))
+			.catch((e) => setError(e.response.data))
 	}
 
 	return (
 		<div>
 			<h2>Listado de Personas</h2>
 			<button onClick={() => setShowNewForm(true)}>Agregar Persona</button>
-			{error.length > 0 && <Errors msgError={error} />}
+			{success && <Success msgSuccess={success} />}
+			{error && <Errors msgError={error} />}
 			<table>
 				<thead>
 					<tr>

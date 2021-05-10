@@ -3,6 +3,8 @@ import axios from 'axios'
 import { useHistory, useParams } from 'react-router-dom'
 import NewFormLibro from './NewFormLibro'
 import EditFormLibro from './EditFormLibro'
+import Errors from '../Message/Errors'
+import Success from '../Message/Success'
 
 const Libros = () => {
 	const [libros, setLibros] = useState([])
@@ -15,12 +17,14 @@ const Libros = () => {
 	const [showNewForm, setShowNewForm] = useState(false)
 	const [showEditForm, setShowEditForm] = useState(false)
 	const [libroEditar, setLibroEditar] = useState([])
-	const [error, setError] = useState([])
 
 	const [categorias, setCategorias] = useState([])
 
 	const history = useHistory()
 	const params = useParams()
+	const [errorPrestar, setErrorPrestar] = useState('')
+	const [errors, setErrors] = useState('')
+	const [success, setSuccess] = useState('')
 
 	const TraerLibros = async () => {
 		try {
@@ -50,7 +54,6 @@ const Libros = () => {
 			})
 
 			setLibros(newListadoAll)
-			console.log('newListadoAll:', newListadoAll)
 		} catch (e) {
 			console.log(e)
 		}
@@ -63,8 +66,8 @@ const Libros = () => {
 	const handleDevolver = async (id) => {
 		await axios
 			.put(`http://localhost:3001/api/libros/devolver/${id}`)
-			.then((res) => console.log('handleDevolver:', res), history.go(0))
-			.catch((e) => console.log(e))
+			.then((res) => setSuccess(res.data))
+			.catch((e) => setErrors(e.response.data))
 	}
 
 	const handlePrestar = async (id) => {
@@ -73,10 +76,9 @@ const Libros = () => {
 			setLibroPrestar(libro.data.respuesta)
 			const personas = await axios.get('http://localhost:3001/api/personas')
 			setPersonaPrestar(personas.data.respuesta)
-			console.log('setPersonaPrestar:', personas.data.respuesta)
 			setSelectPersona(true)
 		} catch (e) {
-			console.log(e)
+			setErrorPrestar(e.response.data)
 		}
 	}
 
@@ -90,8 +92,8 @@ const Libros = () => {
 				`http://localhost:3001/api/libros/prestar/${libroPrestar[0].id}`,
 				personaAPrestar
 			)
-			.then((res) => console.log('handleSubmitPrestar:', res), history.go(0))
-			.catch((e) => console.log(e))
+			.then((res) => setSuccess(res.data))
+			.catch((e) => setErrorPrestar(e.response.data))
 	}
 
 	const handleDelete = async (id) => {
@@ -110,7 +112,7 @@ const Libros = () => {
 				setShowEditForm(true)
 			)
 			.catch((e) => {
-				return setError([e.response.data])
+				return setErrors(e.response.data)
 			})
 	}
 
@@ -123,6 +125,8 @@ const Libros = () => {
 		<div>
 			<h1>Libros:</h1>
 			<button onClick={() => setShowNewForm(true)}>Agregar un Libro</button>
+			{errors && <Errors msgError={errors} />}
+			{success && <Success msgSuccess={success} />}
 			<table>
 				<thead>
 					<tr>
@@ -167,6 +171,7 @@ const Libros = () => {
 			{selectPersona && (
 				<>
 					<h4>Prestar a:</h4>
+					{errorPrestar && <Errors msgError={errorPrestar} />}
 					<select onChange={handleChangePrestar}>
 						<option selected disabled>
 							--Selecciona--

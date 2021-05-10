@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 import NewFormCategoria from './NewFormCategoria'
+import Success from '../Message/Success'
 
 const Categorias = () => {
 	/*
@@ -10,10 +11,9 @@ const Categorias = () => {
 	 * - Baja => Borrar Categoria
 	 */
 
-	const [categorias, setCategorias] = useState([])
-	const [error, setError] = useState([])
-	const [errorDelete, setErrorDelete] = useState([])
+	const [success, setSuccess] = useState('')
 
+	const [categorias, setCategorias] = useState([])
 	const [showNewForm, setShowNewForm] = useState(false)
 
 	const history = useHistory()
@@ -21,11 +21,8 @@ const Categorias = () => {
 	const traerCategorias = async () => {
 		await axios
 			.get('http://localhost:3001/api/categorias')
-			.then(
-				(res) => setCategorias(res.data.respuesta),
-				(res) => console.log('setCategorias:', res.data.respuesta)
-			)
-			.catch((e) => setError(e.response.data))
+			.then((res) => setCategorias(res.data.respuesta))
+			.catch((e) => console.log(e))
 	}
 
 	useEffect(() => {
@@ -35,20 +32,18 @@ const Categorias = () => {
 	const handleDelete = async (id) => {
 		await axios
 			.delete(`http://localhost:3001/api/categorias/${id}`)
-			.then((res) => console.log('handleDelete:', res), history.go(0))
-			.catch((e) => setErrorDelete([e.response.data.Error]))
+			.then(
+				(res) => setSuccess(res.data)
+				/* history.go(0) */
+			)
+			.catch((e) => console.log(e))
 	}
 
 	return (
 		<div>
 			<h1>Categorias:</h1>
 			<button onClick={() => setShowNewForm(true)}>Agrega una categoria</button>
-			{errorDelete &&
-				errorDelete.map((err) => (
-					<div key={1}>
-						<p>{err}</p>
-					</div>
-				))}
+			{success && <Success msgSuccess={success} />}
 			{categorias &&
 				categorias.map((categoria) => (
 					<div key={categoria.id} className='categoria'>

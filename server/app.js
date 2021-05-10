@@ -51,7 +51,7 @@ app.get('/api/categorias/:id', async (req, res) => {
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ 'Error inesperado': e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -59,7 +59,7 @@ app.get('/api/categorias/:id', async (req, res) => {
 app.post('/api/categorias', async (req, res) => {
 	try {
 		if (!req.body.nombre) {
-			throw new Error('Faltan datos')
+			throw new Error('Debe completar el nombre de la Categoria')
 		}
 		const nombre = req.body.nombre.toUpperCase()
 
@@ -73,8 +73,7 @@ app.post('/api/categorias', async (req, res) => {
 		query = 'INSERT INTO genero (nombre) VALUE (?)'
 		respuesta = await qy(query, [nombre])
 
-		res.send({ respuesta: respuesta })
-		console.log(`Se inserto correctamente la categoria ${req.body.nombre}`)
+		res.send(`Se inserto correctamente la categoria "${req.body.nombre}"`)
 	} catch (e) {
 		console.error(e.message)
 		res.status(413).send(e.message)
@@ -92,11 +91,10 @@ app.delete('/api/categorias/:id', async (req, res) => {
 		}
 		query = 'DELETE FROM genero WHERE id = ?'
 		respuesta = await qy(query, [req.params.id])
-		res.send({ respuesta: respuesta.affectedRows })
-		console.log(`Se eliminó correctamente el género con id ${req.params.id}`)
+		res.send('Se elimino correctamente la categoria')
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ Error: e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -110,7 +108,7 @@ app.get('/api/personas', async (req, res) => {
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ Error: e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -158,13 +156,12 @@ app.post('/api/personas', async (req, res) => {
 		query =
 			'INSERT INTO persona (nombre, apellido, mail, alias) VALUE (?,?,?,?)'
 		respuesta = await qy(query, [nombre, apellido, mail, alias])
-		res.send({ respuesta: respuesta })
-		console.log(
-			`Se registro correctamente al cliente ${req.body.nombre} ${req.body.apellido}`
+		res.send(
+			`Se registro correctamente a la persona "${req.body.nombre} ${req.body.apellido}"`
 		)
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ 'Error inesperado': e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -189,10 +186,8 @@ app.put('/api/personas/:id', async (req, res) => {
 		query =
 			'UPDATE persona SET nombre = ?, apellido = ?, alias = ? WHERE id = ?'
 		respuesta = await qy(query, [nombre, apellido, alias, req.params.id])
-		res.send({ respuesta: respuesta })
-
-		console.log(
-			`Se modificaron los datos correctamente: Nombre:${req.body.nombre} Apellido:${req.body.apellido} Alias:${req.body.alias}`
+		res.send(
+			`Se modificaron los datos correctamente de "${req.body.nombre} ${req.body.apellido}"`
 		)
 	} catch (e) {
 		console.error(e.message)
@@ -213,10 +208,10 @@ app.delete('/api/personas/:id', async (req, res) => {
 		}
 		query = 'DELETE FROM persona WHERE id = ?'
 		respuesta = await qy(query, [req.params.id])
-		console.log(`La persona se elimino correctamente`)
+		res.send(`La persona se elimino correctamente`)
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ 'Error inesperado': e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -230,7 +225,7 @@ app.get('/api/libros', async (req, res) => {
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ Error: e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -247,14 +242,6 @@ app.post('/api/libros', async (req, res) => {
 			throw new Error('Ya existe un libro con ese nombre')
 		}
 
-		// if (req.body.id_persona) {
-		//     const quer = 'SELECT nombre,apellido,mail,alias FROM persona WHERE id = ?';
-		//     const respuest = await qy(quer, [req.body.id_persona]);
-		//     if (respuest.length < 1) {
-		//         throw new Error('La persona no existe no podemos prestarle el libro deje el campo nulo para acomodarlo en el inventario o ingrese la persona correcta');
-		//     };
-		// };
-
 		const categoria = 'SELECT * FROM genero WHERE id = ?'
 		const respuestaCategoria = await qy(categoria, [req.body.id_genero])
 
@@ -268,8 +255,7 @@ app.post('/api/libros', async (req, res) => {
 
 		query = 'INSERT INTO libros (nombre, descripcion, id_genero) VALUE (?,?,?)'
 		respuesta = await qy(query, [nombre, descripcion, id_genero])
-		res.send({ respuesta: respuesta })
-		console.log(`Se registro correctamente el libro ${req.body.nombre}`)
+		res.send(`Se registro correctamente el libro "${req.body.nombre}"`)
 	} catch (e) {
 		console.log(e.message)
 		res.status(413).send(e.message)
@@ -293,7 +279,7 @@ app.get('/api/libros/:id', async (req, res) => {
 		res.send({ respuesta: respuesta })
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ Error: e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -312,7 +298,7 @@ app.put('/api/libros/:id', async (req, res) => {
 		console.log(`Se modificaron correctamente los datos del libro`)
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ 'Error inesperado': e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -345,7 +331,7 @@ app.put('/api/libros/prestar/:id', async (req, res) => {
 		if (respuesta.length > 0) {
 			query = `UPDATE libros SET id_persona = ? WHERE id = ?`
 			respuesta = await qy(query, [req.body.id_persona, req.params.id])
-			res.send({ respuesta: respuesta })
+			res.send('Se presto el libro correctamente')
 		} else {
 			throw new Error(
 				'El libro se encuentra prestado, debe aguardar su devolucion'
@@ -353,7 +339,7 @@ app.put('/api/libros/prestar/:id', async (req, res) => {
 		}
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ Error: e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -372,13 +358,13 @@ app.put('/api/libros/devolver/:id', async (req, res) => {
 		if (respuesta.length > 0) {
 			query = `UPDATE libros SET id_persona = null WHERE id = ?`
 			respuesta = await qy(query, [req.params.id])
-			console.log('Se devolvio el libro correctamente a la biblioteca')
+			res.send('Se devolvio el libro correctamente a la biblioteca')
 		} else {
 			throw new Error('El libro no se encuentra prestado en este momento.')
 		}
 	} catch (e) {
 		console.error(e.message)
-		res.status(413).send({ Error: e.message })
+		res.status(413).send(e.message)
 	}
 })
 
@@ -394,15 +380,12 @@ app.delete('/api/libros/:id', async (req, res) => {
 		let query = 'SELECT * FROM libros WHERE id = ? AND id_persona IS NOT NULL'
 		let respuesta = await qy(query, [req.params.id])
 
-		console.log(respuesta.length)
-
 		if (respuesta.length > 0) {
 			throw new Error('El libro se encuentra prestado no podemos eliminarlo')
 		} else {
 			query = 'DELETE FROM libros WHERE id = ?'
 			respuesta = await qy(query, [req.params.id])
-			console.log(`El libro fue eliminado correctamente.`)
-			res.send({ respuesta: respuesta })
+			res.send('El libro fue eliminado correctamente')
 		}
 	} catch (e) {
 		console.error(e.message)

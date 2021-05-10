@@ -1,16 +1,19 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
-import Errors from '../Message/Errors'
 import PropTypes from 'prop-types'
+import Errors from '../Message/Errors'
+import Success from '../Message/Success'
 
 const EditFormLibro = (props) => {
 	const { libroEditar } = props
 	const [editLibro, setEditLibro] = useState({
 		descripcion: '',
 	})
-	const [error, setError] = useState([])
 	const history = useHistory()
+
+	const [errors, setErrors] = useState('')
+	const [success, setSuccess] = useState('')
 
 	const handleChange = (e) => {
 		setEditLibro({
@@ -22,13 +25,14 @@ const EditFormLibro = (props) => {
 	const handleSubmit = async (id) => {
 		await axios
 			.put(`http://localhost:3001/api/libros/${id}`, editLibro)
-			.then((res) => console.log(res), history.go(0))
-			.catch((e) => console.log(e))
+			.then((res) => setSuccess(res.data))
+			.catch((e) => setErrors(e.response.data))
 	}
 
 	return (
 		<div>
-			{error.length > 0 && <Errors msgError={error} />}
+			{errors && <Errors msgError={errors} />}
+			{success && <Success msgSuccess={success} />}
 			{libroEditar.map((libro) => (
 				<>
 					<input
