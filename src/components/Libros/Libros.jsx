@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useHistory, useParams } from 'react-router-dom'
+import NewFormLibro from './NewFormLibro'
 import EditFormLibro from './EditFormLibro'
 
 const Libros = () => {
@@ -9,7 +10,6 @@ const Libros = () => {
 	const [personaPrestar, setPersonaPrestar] = useState([])
 	const [libroPrestar, setLibroPrestar] = useState([])
 	const [selectPersona, setSelectPersona] = useState(false)
-
 	const [personaAPrestar, setPersonaAPrestar] = useState({})
 
 	const [showNewForm, setShowNewForm] = useState(false)
@@ -18,11 +18,6 @@ const Libros = () => {
 	const [error, setError] = useState([])
 
 	const [categorias, setCategorias] = useState([])
-	const [newLibro, setNewlibro] = useState({
-		nombre: '',
-		descripcion: '',
-		id_genero: '',
-	})
 
 	const history = useHistory()
 	const params = useParams()
@@ -106,20 +101,6 @@ const Libros = () => {
 			.catch((e) => console.log(e))
 	}
 
-	const handleChangeNew = (e) => {
-		setNewlibro({
-			...newLibro,
-			[e.target.name]: e.target.value,
-		})
-	}
-
-	const handleSubmitNewLibro = async () => {
-		await axios
-			.post('http://localhost:3001/api/libros', newLibro)
-			.then((res) => console.log('handleSubmitNewLibro:', res), history.go(0))
-			.catch((e) => console.log(e))
-	}
-
 	const handleEdit = async (id) => {
 		await axios
 			.get(`http://localhost:3001/api/libros/${id}`)
@@ -142,35 +123,6 @@ const Libros = () => {
 		<div>
 			<h1>Libros:</h1>
 			<button onClick={() => setShowNewForm(true)}>Agregar un Libro</button>
-			{showNewForm && (
-				<>
-					<label>Nombre</label>
-					<input
-						type='text'
-						name='nombre'
-						placeholder='Ingresa el nombre'
-						value={newLibro.nombre}
-						onChange={handleChangeNew}
-					/>
-					<label>Descripcion</label>
-					<textarea
-						name='descripcion'
-						value={newLibro.descripcion}
-						onChange={handleChangeNew}
-					></textarea>
-					<select name='id_genero' onChange={handleChangeNew}>
-						<option selected disabled>
-							--Selecciona--
-						</option>
-						{categorias.map((categoria) => (
-							<option key={categoria.id} value={categoria.id}>
-								{categoria.nombre}
-							</option>
-						))}
-					</select>
-					<button onClick={handleSubmitNewLibro}>Agregar Libro</button>
-				</>
-			)}
 			<table>
 				<thead>
 					<tr>
@@ -228,6 +180,7 @@ const Libros = () => {
 					<button onClick={handleSubmitPrestar}>Prestar Libro</button>
 				</>
 			)}
+			{showNewForm && <NewFormLibro categorias={categorias} />}
 			{showEditForm && <EditFormLibro libroEditar={libroEditar} />}
 		</div>
 	)
