@@ -1,0 +1,12 @@
+section {
+	width: 100%;
+}
+
+h1 {
+	text-transform: uppercase;
+	padding: 2rem 0rem;
+	margin-bottom: 2rem;
+	text-align: center;
+	border-bottom: 2px solid #ededed;
+	color: #555555;
+}

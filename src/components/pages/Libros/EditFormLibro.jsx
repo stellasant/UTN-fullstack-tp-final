@@ -3,7 +3,7 @@ import axios from 'axios'
 import Errors from '../Message/Errors'
 import Success from '../Message/Success'
 
-const EditFormLibro = (props) => {
+export const EditFormLibro = (props) => {
 	const { libroEditar } = props
 	const [editLibro, setEditLibro] = useState({
 		descripcion: '',
@@ -46,5 +46,3 @@ const EditFormLibro = (props) => {
 		</div>
 	)
 }
-
-export default EditFormLibro

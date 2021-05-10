@@ -1,0 +1,19 @@
+.slider {
+	width: 100%;
+	z-index: 1;
+	padding-bottom: 4rem;
+
+}
+
+.slider > .hero-img {
+	width: 100%;
+  background-image: url(../../assets/slide-home.jpg);
+  height: 400px;
+}
+
+.info {
+	display: grid;
+	grid-template-columns: repeat(3, 1fr);
+	grid-gap: 1rem;
+	padding-bottom: 4rem;
+}

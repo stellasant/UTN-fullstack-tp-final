@@ -6,7 +6,7 @@ import EditFormLibro from './EditFormLibro'
 import Errors from '../Message/Errors'
 import Success from '../Message/Success'
 
-const Libros = () => {
+export const Libros = () => {
 	const [libros, setLibros] = useState([])
 
 	const [personaPrestar, setPersonaPrestar] = useState([])
@@ -194,5 +194,3 @@ const Libros = () => {
 		</div>
 	)
 }
-
-export default Libros

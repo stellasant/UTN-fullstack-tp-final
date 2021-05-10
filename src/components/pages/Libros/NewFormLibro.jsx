@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import Errors from '../Message/Errors'
-import Success from '../Message/Success'
+import Errors from '../../common/Message/Errors'
+import Success from '../../common/Message/Success'
 
-const NewFormLibro = (props) => {
+export const NewFormLibro = (props) => {
 	const { categorias } = props
 	const [newLibro, setNewlibro] = useState({
 		nombre: '',
@@ -60,5 +60,3 @@ const NewFormLibro = (props) => {
 		</div>
 	)
 }
-
-export default NewFormLibro

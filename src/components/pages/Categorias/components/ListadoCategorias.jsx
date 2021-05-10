@@ -1,15 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import NewFormCategoria from './NewFormCategoria'
-import Success from '../Message/Success'
+import { NewFormCategoria } from './NewFormCategoria'
+import Success from '../../../common/Message/Success'
 
-const Categorias = () => {
-	/*
-	 * TODO Categorias:
-	 * - Alta => Agregar nueva Categoria
-	 * - Baja => Borrar Categoria
-	 */
-
+export const ListadoCategorias = () => {
 	const [success, setSuccess] = useState('')
 
 	const [categorias, setCategorias] = useState([])
@@ -54,5 +48,3 @@ const Categorias = () => {
 		</div>
 	)
 }
-
-export default Categorias

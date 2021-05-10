@@ -1,33 +1,54 @@
-import './App.css'
-import { Switch, Route, Link } from 'react-router-dom'
-import Personas from './components/Personas/Personas'
-import Libros from './components/Libros/Libros'
-import Categorias from './components/Categorias/Categorias'
+import React from 'react'
+import './App.scss'
+import { Header } from './components/common/Header'
+import { Home } from './components/pages/Home'
+import { Personas } from './components/pages/Personas'
+/* import { Libros } from './components/pages/Libros'
+import { Categorias } from './components/pages/Categorias' */
+import { Switch, Route } from 'react-router-dom'
 
 function App() {
+	let menuLinks = [
+		{
+			item: 'Home',
+			path: '/',
+			component: Home,
+		},
+		{
+			item: 'Personas',
+			path: '/personas',
+			component: Personas,
+		},
+		/* 	{
+			item: 'Libros',
+			path: '/libros',
+			component: Libros,
+		},
+		{
+			item: 'Géneros',
+			path: '/generos',
+			component: Categorias,
+		}, */
+	]
 	return (
 		<div className='App'>
-			<div style={{ position: 'relative' }}>
-				<div
-					style={{
-						display: 'flex',
-						gap: '20px',
-						justifyContent: 'center',
-						padding: '1rem',
-						position: 'sticky',
-						top: '0px',
-					}}
-				>
-					<Link to='/personas'>Personas</Link>
-					<Link to='/libros'>Libros</Link>
-					<Link to='/categorias'>Categorias</Link>
-				</div>
+			<div className='container'>
+				<Header items={menuLinks} />
+
+				<main className='main'>
+					<Switch>
+						{menuLinks.map((link, index) => (
+							<Route
+								key={index}
+								path={link.path}
+								component={link.component}
+								exact
+							/>
+						))}
+					</Switch>
+				</main>
 			</div>
-			<Switch>
-				<Route path='/personas' component={Personas} />
-				<Route path='/libros' component={Libros} />
-				<Route path='/categorias' component={Categorias} />
-			</Switch>
+			<footer>My Books - 2021</footer>
 		</div>
 	)
 }

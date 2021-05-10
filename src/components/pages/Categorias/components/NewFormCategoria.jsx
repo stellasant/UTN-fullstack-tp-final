@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import Errors from '../Message/Errors'
-import Success from '../Message/Success'
+import Errors from '../../../common/Message/Errors'
+import Success from '../../../common/Message/Success'
 
-const NewFormCategoria = () => {
+export const NewFormCategoria = () => {
 	const [error, setError] = useState('')
 	const [success, setSuccess] = useState('')
 
@@ -42,5 +42,3 @@ const NewFormCategoria = () => {
 		</div>
 	)
 }
-
-export default NewFormCategoria
