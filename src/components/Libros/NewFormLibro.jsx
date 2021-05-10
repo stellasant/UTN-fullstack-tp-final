@@ -30,9 +30,9 @@ const NewFormLibro = (props) => {
 
 	return (
 		<div>
-			<label>Nombre</label>
 			{errors && <Errors msgError={errors} />}
 			{success && <Success msgSuccess={success} />}
+			<label>Nombre</label>
 			<input
 				type='text'
 				name='nombre'

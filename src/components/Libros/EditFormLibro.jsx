@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import PropTypes from 'prop-types'
 import Errors from '../Message/Errors'
 import Success from '../Message/Success'
 
@@ -39,6 +38,7 @@ const EditFormLibro = (props) => {
 						value={editLibro.descripcion}
 						onChange={handleChange}
 						placeholder='Descripcion'
+						key={editLibro.id}
 					/>
 					<button onClick={() => handleSubmit(libro.id)}>Editar</button>
 				</>
@@ -48,11 +48,3 @@ const EditFormLibro = (props) => {
 }
 
 export default EditFormLibro
-
-EditFormLibro.propTypes = {
-	libroEditar: PropTypes.oneOf([
-		{
-			descripcion: PropTypes.node,
-		},
-	]),
-}

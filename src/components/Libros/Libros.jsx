@@ -16,7 +16,11 @@ const Libros = () => {
 
 	const [showNewForm, setShowNewForm] = useState(false)
 	const [showEditForm, setShowEditForm] = useState(false)
-	const [libroEditar, setLibroEditar] = useState([])
+	const [libroEditar, setLibroEditar] = useState([
+		{
+			descripcion: '',
+		},
+	])
 
 	const [categorias, setCategorias] = useState([])
 
