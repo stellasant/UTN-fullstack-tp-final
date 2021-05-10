@@ -31,7 +31,7 @@ const EditFormPersona = (props) => {
 	return (
 		<div>
 			{error.length > 0 && <Errors msgError={error} />}
-			{personaEditar.map((el) => (
+			{personaEditar.map((persona) => (
 				<>
 					<input
 						type='text'
@@ -54,7 +54,7 @@ const EditFormPersona = (props) => {
 						onChange={handleChange}
 						placeholder='Alias'
 					/>
-					<button onClick={() => handleSubmit(el.id)}>Editar</button>
+					<button onClick={() => handleSubmit(persona.id)}>Editar</button>
 				</>
 			))}
 		</div>
