@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
+import EditFormLibro from './EditFormLibro'
 
 const Libros = () => {
 	const [libros, setLibros] = useState([])
@@ -11,7 +12,11 @@ const Libros = () => {
 
 	const [personaAPrestar, setPersonaAPrestar] = useState({})
 
-	const [formLibro, setFormlibro] = useState(false)
+	const [showNewForm, setShowNewForm] = useState(false)
+	const [showEditForm, setShowEditForm] = useState(false)
+	const [libroEditar, setLibroEditar] = useState([])
+	const [error, setError] = useState([])
+
 	const [categorias, setCategorias] = useState([])
 	const [newLibro, setNewlibro] = useState({
 		nombre: '',
@@ -20,6 +25,7 @@ const Libros = () => {
 	})
 
 	const history = useHistory()
+	const params = useParams()
 
 	const TraerLibros = async () => {
 		try {
@@ -114,11 +120,29 @@ const Libros = () => {
 			.catch((e) => console.log(e))
 	}
 
+	const handleEdit = async (id) => {
+		await axios
+			.get(`http://localhost:3001/api/libros/${id}`)
+			.then(
+				(res) => setLibroEditar(res.data.respuesta),
+				(res) => console.log('setLibroEditar:', res.data.respuesta),
+				setShowEditForm(true)
+			)
+			.catch((e) => {
+				return setError([e.response.data])
+			})
+	}
+
+	useEffect(() => {
+		if (!params.id) return
+		handleEdit(params.id)
+	}, [params])
+
 	return (
 		<div>
 			<h1>Libros:</h1>
-			<button onClick={() => setFormlibro(true)}>Agregar un Libro</button>
-			{formLibro && (
+			<button onClick={() => setShowNewForm(true)}>Agregar un Libro</button>
+			{showNewForm && (
 				<>
 					<label>Nombre</label>
 					<input
@@ -179,6 +203,7 @@ const Libros = () => {
 									<button onClick={() => handleDelete(libro.id)}>
 										Eliminar
 									</button>
+									<button onClick={() => handleEdit(libro.id)}>Editar</button>
 								</td>
 							</tr>
 						))}
@@ -202,6 +227,7 @@ const Libros = () => {
 					<button onClick={handleSubmitPrestar}>Prestar Libro</button>
 				</>
 			)}
+			{showEditForm && <EditFormLibro libroEditar={libroEditar} />}
 		</div>
 	)
 }
