@@ -25,3 +25,5 @@ FE ReactJS app to manage a user library by making queries to a MySQL DB develope
 - axios
 - react-router-dom
 - styled-components
+- sass
+- sweetalert2

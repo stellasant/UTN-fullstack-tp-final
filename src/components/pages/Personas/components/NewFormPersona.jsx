@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import Errors from '../../../common/Message/Errors'
-import Success from '../../../common/Message/Success'
+import Swal from 'sweetalert2'
 import { FormWrapper, WrapperInput, ButtonsWrapper } from '../../../common/Form'
 
 export const NewFormPersona = (props) => {
@@ -13,8 +12,6 @@ export const NewFormPersona = (props) => {
 		mail: '',
 		alias: '',
 	})
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState('')
 
 	const handleChange = (e) => {
 		setNewPersona({
@@ -26,15 +23,25 @@ export const NewFormPersona = (props) => {
 	const handleSubmit = async () => {
 		await axios
 			.post('http://localhost:3001/api/personas', newPersona)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setError(e.response.data))
+			.then((res) => {
+				return Swal.fire(
+					'Nueva Persona agregada con éxito!',
+					`${res.data}`,
+					'success'
+				)
+			})
+			.catch((e) => {
+				return Swal.fire(
+					'Ups! La nueva Persona no se pudo agregar!',
+					`${e.response.data}`,
+					'warning'
+				)
+			})
 	}
 
 	return (
 		<FormWrapper>
 			<h3>Agrega una nueva Persona</h3>
-			{success && <Success msgSuccess={success} />}
-			{error && <Errors msgError={error} />}
 			<WrapperInput>
 				<label htmlFor='nombre'>Nombre</label>
 				<input

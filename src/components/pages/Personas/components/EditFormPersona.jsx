@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
-import axios from 'axios'
 import PropTypes from 'prop-types'
-import Errors from '../../../common/Message/Errors'
-import Success from '../../../common/Message/Success'
+import axios from 'axios'
+import Swal from 'sweetalert2'
 import { FormWrapper, WrapperInput, ButtonsWrapper } from '../../../common/Form'
 
 export const EditFormPersona = (props) => {
@@ -14,9 +13,6 @@ export const EditFormPersona = (props) => {
 		alias: '',
 	})
 
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState('')
-
 	const handleChange = (e) => {
 		setEditPersona({
 			...editPersona,
@@ -27,14 +23,20 @@ export const EditFormPersona = (props) => {
 	const handleSubmit = async (id) => {
 		await axios
 			.put(`http://localhost:3001/api/personas/${id}`, editPersona)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setError(e.response.data))
+			.then((res) => {
+				return Swal.fire('Persona Editada con éxito!', `${res.data}`, 'success')
+			})
+			.catch((e) => {
+				return Swal.fire(
+					'Ups! La Persona no se pudo Editar!',
+					`${e.response.data}`,
+					'warning'
+				)
+			})
 	}
 
 	return (
 		<FormWrapper>
-			{success && <Success msgSuccess={success} />}
-			{error && <Errors msgError={error} />}
 			{personaEditar.map((persona) => (
 				<>
 					<h3>Editar {persona.nombre}</h3>

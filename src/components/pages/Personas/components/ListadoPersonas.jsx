@@ -1,18 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useParams } from 'react-router-dom'
+import Swal from 'sweetalert2'
 import { EditFormPersona } from './EditFormPersona'
-import Errors from '../../../common/Message/Errors'
-import Success from '../../../common/Message/Success'
 import { GridCards, Card } from '../../../common/Card'
-import { ButtonsWrapper } from '../../../common/Form'
 import { Section } from '../../../common/Section'
 import Person from '../../../assets/man.png'
 
 export const ListadoPersonas = () => {
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState('')
-
 	const [personas, setPersonas] = useState([])
 	const [showEditForm, setShowEditForm] = useState(false)
 	const [personaEditar, setPersonaEditar] = useState([
@@ -28,7 +23,7 @@ export const ListadoPersonas = () => {
 		await axios
 			.get('http://localhost:3001/api/personas')
 			.then((res) => setPersonas(res.data.respuesta))
-			.catch((e) => setError(e.response.data))
+			.catch((e) => console.log(e.response.data))
 	}
 
 	useEffect(() => {
@@ -42,10 +37,7 @@ export const ListadoPersonas = () => {
 				(res) => setPersonaEditar(res.data.respuesta),
 				setShowEditForm(true)
 			)
-			.catch(
-				(e) => console.log(e),
-				(e) => setError(e.response.data)
-			)
+			.catch((e) => console.log(e.response.data))
 	}
 
 	useEffect(() => {
@@ -53,17 +45,40 @@ export const ListadoPersonas = () => {
 		handleEdit(params.id)
 	}, [params])
 
-	const handleDelete = async (id) => {
-		await axios
-			.delete(`http://localhost:3001/api/personas/${id}`)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setError(e.response.data))
+	const handleDelete = (id) => {
+		Swal.fire({
+			title: '¿Estas seguro?',
+			text: 'Una vez eliminado no se puede recuperar',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Si, Borrar!',
+			cancelButtonText: 'No, Cancelar',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				deleteConfirm(id)
+			} else {
+				return
+			}
+		})
+	}
+
+	const deleteConfirm = async (id) => {
+		try {
+			await axios.delete(`http://localhost:3001/api/personas/${id}`)
+			Swal.fire(
+				'Eliminado!',
+				'La persona fue eliminada correctamente',
+				'success'
+			)
+		} catch (e) {
+			Swal.fire('No se pudo Eliminar!', `${e.response.data}`, 'warning')
+		}
 	}
 
 	return (
 		<>
-			{success && <Success msgSuccess={success} />}
-			{error && <Errors msgError={error} />}
 			{showEditForm && (
 				<Section className='section-form'>
 					<EditFormPersona
