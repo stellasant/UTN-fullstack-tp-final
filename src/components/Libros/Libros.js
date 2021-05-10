@@ -36,7 +36,7 @@ const Libros = () => {
 
 			const newListado = respuestaLibros.data.respuesta.map((unLibro) => {
 				const personaAsociada = respuestaPersonas.data.respuesta.find(
-					(unaPersona) => unaPersona.id == unLibro.id_persona
+					(unaPersona) => unaPersona.id === unLibro.id_persona
 				)
 				unLibro.persona = personaAsociada
 				return unLibro
@@ -44,7 +44,7 @@ const Libros = () => {
 
 			const newListadoAll = newListado.map((unLibro) => {
 				const categoriaAsociada = respuestaCategoria.data.respuesta.find(
-					(unaCategoria) => unaCategoria.id == unLibro.id_genero
+					(unaCategoria) => unaCategoria.id === unLibro.id_genero
 				)
 				unLibro.categoria = categoriaAsociada
 
@@ -110,7 +110,7 @@ const Libros = () => {
 	}
 
 	const handleSubmitNew = async () => {
-		const respuesta = await axios
+		await axios
 			.post('http://localhost:3001/api/libros', newlibro)
 			.then((res) => console.log(res), history.go(0))
 			.catch((e) => console.log(e))
