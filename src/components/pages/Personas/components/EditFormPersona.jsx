@@ -28,7 +28,7 @@ export const EditFormPersona = (props) => {
 			})
 			.catch((e) => {
 				return Swal.fire(
-					'Ups! La Persona no se pudo Editar!',
+					'Ups! No se pudo Editar',
 					`${e.response.data}`,
 					'warning'
 				)

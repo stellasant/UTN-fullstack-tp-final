@@ -5,7 +5,7 @@ import Swal from 'sweetalert2'
 import { EditFormPersona } from './EditFormPersona'
 import { GridCards, Card } from '../../../common/Card'
 import { Section } from '../../../common/Section'
-import Person from '../../../assets/man.png'
+import Personas from '../../../assets/personas-red.svg'
 
 export const ListadoPersonas = () => {
 	const [personas, setPersonas] = useState([])
@@ -73,7 +73,7 @@ export const ListadoPersonas = () => {
 				'success'
 			)
 		} catch (e) {
-			Swal.fire('No se pudo Eliminar!', `${e.response.data}`, 'warning')
+			Swal.fire('Ups! No se pudo Eliminar', `${e.response.data}`, 'warning')
 		}
 	}
 
@@ -92,7 +92,7 @@ export const ListadoPersonas = () => {
 					personas.map((persona) => (
 						<Card.Wrapper key={persona.id}>
 							<Card.Header>
-								<Card.Image src={Person} alt='personas-icon' />
+								<Card.Image src={Personas} alt='personas-icon' />
 								<div>
 									<Card.Value>{persona.nombre}</Card.Value>
 									<Card.Label>ID {persona.id}</Card.Label>

@@ -32,7 +32,7 @@ export const NewFormPersona = (props) => {
 			})
 			.catch((e) => {
 				return Swal.fire(
-					'Ups! La nueva Persona no se pudo agregar!',
+					'Ups! No se pudo agregar!',
 					`${e.response.data}`,
 					'warning'
 				)

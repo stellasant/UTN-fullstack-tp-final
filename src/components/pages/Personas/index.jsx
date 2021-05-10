@@ -14,7 +14,7 @@ export const Personas = () => {
 				<ActionsSection>
 					<h2>Listado de Personas en Biblioteca</h2>
 					<AddButton onClick={() => setShowNewForm(true)}>
-						+ Agregar Persona
+						Agregar Persona
 					</AddButton>
 				</ActionsSection>
 			</Section>
