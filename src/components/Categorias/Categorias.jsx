@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
-import AddFormCategoria from './AddFormCategoria'
+import NewFormCategoria from './NewFormCategoria'
 
-export default function GetCategorias() {
+const Categorias = () => {
 	/*
 	 * TODO Categorias:
 	 * - Alta => Agregar nueva Categoria
@@ -61,7 +61,9 @@ export default function GetCategorias() {
 					</div>
 				))}
 
-			{showNewForm && <AddFormCategoria />}
+			{showNewForm && <NewFormCategoria />}
 		</div>
 	)
 }
+
+export default Categorias

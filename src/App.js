@@ -2,7 +2,7 @@ import './App.css'
 import { Switch, Route, Link } from 'react-router-dom'
 import Personas from './components/Personas/Personas'
 import Libros from './components/Libros/Libros'
-import GetCategorias from './components/Categorias/GetCategorias'
+import Categorias from './components/Categorias/Categorias'
 
 function App() {
 	return (
@@ -26,7 +26,7 @@ function App() {
 			<Switch>
 				<Route path='/personas' component={Personas} />
 				<Route path='/libros' component={Libros} />
-				<Route path='/categorias' component={GetCategorias} />
+				<Route path='/categorias' component={Categorias} />
 			</Switch>
 		</div>
 	)

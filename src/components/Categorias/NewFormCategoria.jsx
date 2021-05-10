@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 
-const AddFormCategoria = () => {
+const NewFormCategoria = () => {
 	const [newCategoria, setNewCategoria] = useState({
 		nombre: '',
 	})
@@ -40,4 +40,4 @@ const AddFormCategoria = () => {
 	)
 }
 
-export default AddFormCategoria
+export default NewFormCategoria

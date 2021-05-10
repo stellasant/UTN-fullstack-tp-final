@@ -98,9 +98,8 @@ const Personas = () => {
 						))}
 				</tbody>
 			</table>
-
-			{showEditForm && <EditFormPersona personaEditar={personaEditar} />}
 			{showNewForm && <NewFormPersona />}
+			{showEditForm && <EditFormPersona personaEditar={personaEditar} />}
 		</div>
 	)
 }
