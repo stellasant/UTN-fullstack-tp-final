@@ -61,7 +61,7 @@ const Personas = () => {
 	const handleDelete = async (id) => {
 		await axios
 			.delete(`http://localhost:3001/api/personas/${id}`)
-			.then((res) => console.log(res), history.go(0))
+			.then((res) => console.log('handleDelete:', res), history.go(0))
 			.catch((e) => setError(e.response.data)) //De esta forma accedemos al codigo de error del backend que pusimos
 	}
 

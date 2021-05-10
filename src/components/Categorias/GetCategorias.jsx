@@ -4,56 +4,64 @@ import { useHistory } from 'react-router-dom'
 import AddFormCategoria from './AddFormCategoria'
 
 export default function GetCategorias() {
-	const [listado, setListado] = useState([])
-	const [error, setError] = useState([])
-	const [errordelete, setErrorDelete] = useState([])
+	/*
+	 * TODO Categorias:
+	 * - Alta => Agregar nueva Categoria
+	 * - Baja => Borrar Categoria
+	 */
 
-	const [formAgregar, setFormAgregar] = useState(false)
+	const [categorias, setCategorias] = useState([])
+	const [error, setError] = useState([])
+	const [errorDelete, setErrorDelete] = useState([])
+
+	const [showNewForm, setShowNewForm] = useState(false)
 
 	const history = useHistory()
 
-	async function traerlistado() {
-		try {
-			const respuesta = await axios.get('http://localhost:3001/api/categorias')
-			setListado(respuesta.data.respuesta)
-		} catch (e) {
-			setError('No pude fetchear')
-		}
+	const traerCategorias = async () => {
+		await axios
+			.get('http://localhost:3001/api/categorias')
+			.then(
+				(res) => setCategorias(res.data.respuesta),
+				(res) => console.log('setCategorias:', res.data.respuesta)
+			)
+			.catch((e) => setError(e.response.data))
 	}
+
 	useEffect(() => {
-		traerlistado()
+		traerCategorias()
 	}, [])
 
 	const handleDelete = async (id) => {
 		await axios
 			.delete(`http://localhost:3001/api/categorias/${id}`)
-			.then((res) => console.log(res), history.go(0))
+			.then((res) => console.log('handleDelete:', res), history.go(0))
 			.catch((e) => setErrorDelete([e.response.data.Error]))
 	}
 
 	return (
 		<div>
 			<h1>Categorias:</h1>
-			<button onClick={() => setFormAgregar(true)}>Agrega una categoria</button>
-			{errordelete &&
-				errordelete.map((err) => (
+			<button onClick={() => setShowNewForm(true)}>Agrega una categoria</button>
+			{errorDelete &&
+				errorDelete.map((err) => (
 					<div key={1}>
 						<p>{err}</p>
 					</div>
 				))}
-			{listado &&
-				listado.map((unaCategoria) => (
-					<div key={unaCategoria.id} className='categoria'>
+			{categorias &&
+				categorias.map((categoria) => (
+					<div key={categoria.id} className='categoria'>
 						<h3>
-							{unaCategoria.nombre}
-							<button onClick={() => handleDelete(unaCategoria.id)}>
+							{categoria.nombre}
+							<button onClick={() => handleDelete(categoria.id)}>
 								Eliminar
 							</button>
 						</h3>
 					</div>
 				))}
 
-			{formAgregar && <AddFormCategoria />}
+			{showNewForm && <AddFormCategoria />}
 		</div>
 	)
 }

@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom'
 import Errors from '../Message/Errors'
 
 const NewFormPersona = () => {
-	const [nuevaPersona, setNuevaPersona] = useState({
+	const [newPersona, setNewPersona] = useState({
 		id: undefined,
 		nombre: '',
 		apellido: '',
@@ -15,15 +15,15 @@ const NewFormPersona = () => {
 	const history = useHistory()
 
 	const handleChange = (e) => {
-		setNuevaPersona({
-			...nuevaPersona,
+		setNewPersona({
+			...newPersona,
 			[e.target.name]: e.target.value,
 		})
 	}
 
 	const handleSubmit = async () => {
 		await axios
-			.post('http://localhost:3001/api/personas', nuevaPersona)
+			.post('http://localhost:3001/api/personas', newPersona)
 			.then((res) => console.log(res), history.go(0))
 			.catch((e) => {
 				return setError([e.response.data.Error])
@@ -39,7 +39,7 @@ const NewFormPersona = () => {
 				type='text'
 				name='nombre'
 				placeholder='Nombre'
-				value={nuevaPersona.nombre}
+				value={newPersona.nombre}
 				onChange={handleChange}
 				required
 			/>
@@ -48,7 +48,7 @@ const NewFormPersona = () => {
 				type='text'
 				name='apellido'
 				placeholder='Apellido'
-				value={nuevaPersona.apellido}
+				value={newPersona.apellido}
 				onChange={handleChange}
 				required
 			/>
@@ -57,7 +57,7 @@ const NewFormPersona = () => {
 				type='email'
 				name='mail'
 				placeholder='Email'
-				value={nuevaPersona.mail}
+				value={newPersona.mail}
 				onChange={handleChange}
 				required
 			/>
@@ -66,7 +66,7 @@ const NewFormPersona = () => {
 				type='text'
 				name='alias'
 				placeholder='Alias'
-				value={nuevaPersona.alias}
+				value={newPersona.alias}
 				onChange={handleChange}
 				required
 			/>

@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 
 const EditFormPersona = (props) => {
 	const { personaEditar } = props
-	const [personaEdit, setpersonaEdit] = useState({
+	const [editPersona, setEditPersona] = useState({
 		nombre: '',
 		apellido: '',
 		alias: '',
@@ -15,15 +15,15 @@ const EditFormPersona = (props) => {
 	const history = useHistory()
 
 	const handleChange = (e) => {
-		setpersonaEdit({
-			...personaEdit,
+		setEditPersona({
+			...editPersona,
 			[e.target.name]: e.target.value,
 		})
 	}
 
 	const handleSubmit = async (id) => {
 		await axios
-			.put(`http://localhost:3001/api/personas/${id}`, personaEdit)
+			.put(`http://localhost:3001/api/personas/${id}`, editPersona)
 			.then((res) => console.log(res), history.go(0))
 			.catch((e) => console.log(e))
 	}
@@ -36,21 +36,21 @@ const EditFormPersona = (props) => {
 					<input
 						type='text'
 						name='nombre'
-						value={personaEdit.nombre}
+						value={editPersona.nombre}
 						onChange={handleChange}
 						placeholder='Nombre'
 					/>
 					<input
 						type='text'
 						name='apellido'
-						value={personaEdit.apellido}
+						value={editPersona.apellido}
 						onChange={handleChange}
 						placeholder='Apellido'
 					/>
 					<input
 						type='text'
 						name='alias'
-						value={personaEdit.alias}
+						value={editPersona.alias}
 						onChange={handleChange}
 						placeholder='Alias'
 					/>

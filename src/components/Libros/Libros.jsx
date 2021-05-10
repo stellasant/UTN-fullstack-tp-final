@@ -3,17 +3,17 @@ import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 
 const Libros = () => {
-	const [listalibros, setListaLibros] = useState([])
+	const [libros, setLibros] = useState([])
 
-	const [personaprestar, setPersonaPrestar] = useState([])
-	const [libroprestar, setLibroPrestar] = useState([])
-	const [selectpersona, setselectPersona] = useState(false)
+	const [personaPrestar, setPersonaPrestar] = useState([])
+	const [libroPrestar, setLibroPrestar] = useState([])
+	const [selectPersona, setSelectPersona] = useState(false)
 
-	const [personaAPrestar, setpersonaAPrestar] = useState({})
+	const [personaAPrestar, setPersonaAPrestar] = useState({})
 
-	const [formlibro, setFormlibro] = useState(false)
+	const [formLibro, setFormlibro] = useState(false)
 	const [categorias, setCategorias] = useState([])
-	const [newlibro, setNewlibro] = useState({
+	const [newLibro, setNewlibro] = useState({
 		nombre: '',
 		descripcion: '',
 		id_genero: '',
@@ -23,34 +23,33 @@ const Libros = () => {
 
 	const TraerLibros = async () => {
 		try {
-			const respuestaPersonas = await axios.get(
+			const traerPersonas = await axios.get(
 				'http://localhost:3001/api/personas'
 			)
-			const respuestaLibros = await axios.get(
-				'http://localhost:3001/api/libros'
-			)
-			const respuestaCategoria = await axios.get(
+			const traerLibros = await axios.get('http://localhost:3001/api/libros')
+			const traerCategorias = await axios.get(
 				'http://localhost:3001/api/categorias'
 			)
-			setCategorias(respuestaCategoria.data.respuesta)
+			setCategorias(traerCategorias.data.respuesta)
 
-			const newListado = respuestaLibros.data.respuesta.map((unLibro) => {
-				const personaAsociada = respuestaPersonas.data.respuesta.find(
-					(unaPersona) => unaPersona.id === unLibro.id_persona
+			const newListado = traerLibros.data.respuesta.map((libro) => {
+				const personaAsociada = traerPersonas.data.respuesta.find(
+					(persona) => persona.id === libro.id_persona
 				)
-				unLibro.persona = personaAsociada
-				return unLibro
+				libro.persona = personaAsociada
+				return libro
 			})
 
-			const newListadoAll = newListado.map((unLibro) => {
-				const categoriaAsociada = respuestaCategoria.data.respuesta.find(
-					(unaCategoria) => unaCategoria.id === unLibro.id_genero
+			const newListadoAll = newListado.map((libro) => {
+				const categoriaAsociada = traerCategorias.data.respuesta.find(
+					(categoria) => categoria.id === libro.id_genero
 				)
-				unLibro.categoria = categoriaAsociada
-
-				return unLibro
+				libro.categoria = categoriaAsociada
+				return libro
 			})
-			setListaLibros(newListadoAll)
+
+			setLibros(newListadoAll)
+			console.log('newListadoAll:', newListadoAll)
 		} catch (e) {
 			console.log(e)
 		}
@@ -63,7 +62,7 @@ const Libros = () => {
 	const handleDevolver = async (id) => {
 		await axios
 			.put(`http://localhost:3001/api/libros/devolver/${id}`)
-			.then((res) => console.log(res), history.go(0))
+			.then((res) => console.log('handleDevolver:', res), history.go(0))
 			.catch((e) => console.log(e))
 	}
 
@@ -71,48 +70,47 @@ const Libros = () => {
 		try {
 			const libro = await axios.get(`http://localhost:3001/api/libros/${id}`)
 			setLibroPrestar(libro.data.respuesta)
-			const persona = await axios.get('http://localhost:3001/api/personas')
-			setPersonaPrestar(persona.data.respuesta)
-			setselectPersona(true)
+			const personas = await axios.get('http://localhost:3001/api/personas')
+			setPersonaPrestar(personas.data.respuesta)
+			console.log('setPersonaPrestar:', personas.data.respuesta)
+			setSelectPersona(true)
 		} catch (e) {
 			console.log(e)
 		}
 	}
 
 	const handleChangePrestar = (e) => {
-		setpersonaAPrestar({ id_persona: e.target.value })
+		setPersonaAPrestar({ id_persona: e.target.value })
 	}
 
 	const handleSubmitPrestar = async () => {
 		await axios
 			.put(
-				`http://localhost:3001/api/libros/prestar/${libroprestar[0].id}`,
+				`http://localhost:3001/api/libros/prestar/${libroPrestar[0].id}`,
 				personaAPrestar
 			)
-			.then((res) => console.log(res), history.go(0))
+			.then((res) => console.log('handleSubmitPrestar:', res), history.go(0))
 			.catch((e) => console.log(e))
 	}
 
 	const handleDelete = async (id) => {
-		try {
-			await axios.delete(`http://localhost:3001/api/libros/${id}`)
-			history.go(0)
-		} catch (e) {
-			console.log(e)
-		}
+		await axios
+			.delete(`http://localhost:3001/api/libros/${id}`)
+			.then((res) => console.log('handleDelete:', res), history.go(0))
+			.catch((e) => console.log(e))
 	}
 
 	const handleChangeNew = (e) => {
 		setNewlibro({
-			...newlibro,
+			...newLibro,
 			[e.target.name]: e.target.value,
 		})
 	}
 
-	const handleSubmitNew = async () => {
+	const handleSubmitNewLibro = async () => {
 		await axios
-			.post('http://localhost:3001/api/libros', newlibro)
-			.then((res) => console.log(res), history.go(0))
+			.post('http://localhost:3001/api/libros', newLibro)
+			.then((res) => console.log('handleSubmitNewLibro:', res), history.go(0))
 			.catch((e) => console.log(e))
 	}
 
@@ -120,30 +118,30 @@ const Libros = () => {
 		<div>
 			<h1>Libros:</h1>
 			<button onClick={() => setFormlibro(true)}>Agregar un Libro</button>
-			{formlibro && (
+			{formLibro && (
 				<>
 					<label>Nombre</label>
 					<input
 						type='text'
 						name='nombre'
 						placeholder='Ingresa el nombre'
-						value={newlibro.nombre}
+						value={newLibro.nombre}
 						onChange={handleChangeNew}
 					/>
 					<label>Descripcion</label>
 					<textarea
 						name='descripcion'
-						value={newlibro.descripcion}
+						value={newLibro.descripcion}
 						onChange={handleChangeNew}
 					></textarea>
 					<select name='id_genero' onChange={handleChangeNew}>
-						{categorias.map((unaCategoria) => (
-							<option key={unaCategoria.id} value={unaCategoria.id}>
-								{unaCategoria.nombre}
+						{categorias.map((categoria) => (
+							<option key={categoria.id} value={categoria.id}>
+								{categoria.nombre}
 							</option>
 						))}
 					</select>
-					<button onClick={handleSubmitNew}>Agregar Libro</button>
+					<button onClick={handleSubmitNewLibro}>Agregar Libro</button>
 				</>
 			)}
 			<table>
@@ -158,27 +156,27 @@ const Libros = () => {
 					</tr>
 				</thead>
 				<tbody>
-					{listalibros &&
-						listalibros.map((unLibro) => (
-							<tr key={unLibro.id}>
-								<td>{unLibro.nombre}</td>
-								<td>{unLibro.descripcion}</td>
-								<td>{unLibro.categoria.nombre}</td>
-								{unLibro.persona ? (
+					{libros &&
+						libros.map((libro) => (
+							<tr key={libro.id}>
+								<td>{libro.nombre}</td>
+								<td>{libro.descripcion}</td>
+								<td>{libro.categoria.nombre}</td>
+								{libro.persona ? (
 									<td>
-										{unLibro.persona.nombre} {unLibro.persona.apellido}
+										{libro.persona.nombre} {libro.persona.apellido}
 									</td>
 								) : (
 									<td>No</td>
 								)}
 								<td>
-									<button onClick={() => handleDevolver(unLibro.id)}>
+									<button onClick={() => handleDevolver(libro.id)}>
 										Devolver
 									</button>
-									<button onClick={() => handlePrestar(unLibro.id)}>
+									<button onClick={() => handlePrestar(libro.id)}>
 										Prestar
 									</button>
-									<button onClick={() => handleDelete(unLibro.id)}>
+									<button onClick={() => handleDelete(libro.id)}>
 										Eliminar
 									</button>
 								</td>
@@ -186,17 +184,17 @@ const Libros = () => {
 						))}
 				</tbody>
 			</table>
-			{selectpersona && (
+			{selectPersona && (
 				<>
 					<h4>Prestar a:</h4>
 					<select onChange={handleChangePrestar}>
-						{personaprestar.map((unaPersona) => (
+						{personaPrestar.map((persona) => (
 							<>
 								<option selected disabled>
 									--Selecciona--
 								</option>
-								<option key={unaPersona.id} value={unaPersona.id}>
-									{unaPersona.nombre}
+								<option key={persona.id} value={persona.id}>
+									{persona.nombre}
 								</option>
 							</>
 						))}

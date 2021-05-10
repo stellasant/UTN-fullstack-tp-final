@@ -3,21 +3,21 @@ import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 
 const AddFormCategoria = () => {
-	const [nuevaCategoria, setNuevaCategoria] = useState({
+	const [newCategoria, setNewCategoria] = useState({
 		nombre: '',
 	})
 	const history = useHistory()
 
-	async function handleChange(e) {
-		setNuevaCategoria({
-			...nuevaCategoria,
+	const handleChange = async (e) => {
+		setNewCategoria({
+			...newCategoria,
 			[e.target.name]: e.target.value,
 		})
 	}
 
 	const handleSubmit = async () => {
 		await axios
-			.post('http://localhost:3001/api/categorias', nuevaCategoria)
+			.post('http://localhost:3001/api/categorias', newCategoria)
 			.then((res) => console.log(res), history.go(0))
 			.catch((e) => {
 				console.log(e)
@@ -33,7 +33,7 @@ const AddFormCategoria = () => {
 				name='nombre'
 				placeholder='Ingrese el nombre'
 				onChange={handleChange}
-				value={nuevaCategoria.nombre}
+				value={newCategoria.nombre}
 			/>
 			<button onClick={handleSubmit}>Agregar Categoria</button>
 		</div>
