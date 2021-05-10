@@ -3,8 +3,8 @@ import './App.scss'
 import { Header } from './components/common/Header'
 import { Home } from './components/pages/Home'
 import { Personas } from './components/pages/Personas'
-/* import { Libros } from './components/pages/Libros'
-import { Categorias } from './components/pages/Categorias' */
+import { Libros } from './components/pages/Libros'
+import { Categorias } from './components/pages/Categorias'
 import { Switch, Route } from 'react-router-dom'
 
 function App() {
@@ -19,16 +19,16 @@ function App() {
 			path: '/personas',
 			component: Personas,
 		},
-		/* 	{
+		{
 			item: 'Libros',
 			path: '/libros',
 			component: Libros,
 		},
 		{
-			item: 'Géneros',
-			path: '/generos',
+			item: 'Categorias',
+			path: '/categorias',
 			component: Categorias,
-		}, */
+		},
 	]
 	return (
 		<div className='App'>

@@ -1,12 +1,10 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import Errors from '../../../common/Message/Errors'
-import Success from '../../../common/Message/Success'
+import Swal from 'sweetalert2'
+import { FormWrapper, WrapperInput, ButtonsWrapper } from '../../../common/Form'
 
-export const NewFormCategoria = () => {
-	const [error, setError] = useState('')
-	const [success, setSuccess] = useState('')
-
+export const NewFormCategoria = (props) => {
+	const { onClose } = props
 	const [newCategoria, setNewCategoria] = useState({
 		nombre: '',
 	})
@@ -21,24 +19,39 @@ export const NewFormCategoria = () => {
 	const handleSubmit = async () => {
 		await axios
 			.post('http://localhost:3001/api/categorias', newCategoria)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setError(e.response.data))
+			.then((res) => {
+				return Swal.fire('Agregado!', `${res.data}`, 'success')
+			})
+			.catch((e) => {
+				return Swal.fire('No se pudo Agregar!', `${e.response.data}`, 'warning')
+			})
 	}
 
 	return (
-		<div>
-			<h3>Agrega una nueva Categoria</h3>
-			{success && <Success msgSuccess={success} />}
-			{error && <Errors msgError={error} />}
-			<label>Nombre</label>
-			<input
-				type='text'
-				name='nombre'
-				placeholder='Ingrese el nombre'
-				onChange={handleChange}
-				value={newCategoria.nombre}
-			/>
-			<button onClick={handleSubmit}>Agregar Categoria</button>
-		</div>
+		<FormWrapper>
+			<h3>Agrega una nueva Categoría</h3>
+			<WrapperInput>
+				<label htmlFor='nombre'>Nombre</label>
+				<input
+					type='text'
+					name='nombre'
+					value={newCategoria.nombre}
+					onChange={handleChange}
+					required
+				/>
+			</WrapperInput>
+			<ButtonsWrapper>
+				<button
+					className='button-primary'
+					onClick={handleSubmit}
+					disabled={!newCategoria.nombre}
+				>
+					Agregar
+				</button>
+				<button className='button-secondary' onClick={onClose}>
+					Cancelar
+				</button>
+			</ButtonsWrapper>
+		</FormWrapper>
 	)
 }

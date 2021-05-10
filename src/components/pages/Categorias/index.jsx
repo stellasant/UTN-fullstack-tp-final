@@ -4,25 +4,27 @@ import { Section } from '../../common/Section'
 import { ActionsSection, AddButton } from '../../common/ActionsSection'
 import { NewFormCategoria } from './components/NewFormCategoria'
 import { ListadoCategorias } from './components/ListadoCategorias'
-import { GridCards } from '../../common/Card'
 
 export const Categorias = () => {
-	const [isOpenForm, setIsOpenForm] = useState(false)
+	const [showNewForm, setShowNewForm] = useState(false)
 	return (
 		<>
-			<Titulo nombre='Categorias' />
+			<Titulo nombre='Personas' />
 			<Section>
 				<ActionsSection>
-					<AddButton onClick={() => setIsOpenForm(true)}>
-						+ Agregar Categoria
+					<h2>Listado de Categorías en Biblioteca</h2>
+					<AddButton onClick={() => setShowNewForm(true)}>
+						Agregar Categoría
 					</AddButton>
 				</ActionsSection>
-				{isOpenForm && (
-					<NewFormCategoria onClose={() => setIsOpenForm(false)} />
-				)}
-				<GridCards>
-					<ListadoCategorias />
-				</GridCards>
+			</Section>
+			{showNewForm && (
+				<Section className='section-form'>
+					<NewFormCategoria onClose={() => setShowNewForm(false)} />
+				</Section>
+			)}
+			<Section>
+				<ListadoCategorias />
 			</Section>
 		</>
 	)
