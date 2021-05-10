@@ -290,12 +290,15 @@ app.put('/api/libros/:id', async (req, res) => {
 			throw new Error('Solo se puede modificar la descripcion del libro')
 		}
 
+		if (!req.body.descripcion) {
+			throw new Error('Debe poner una descripcion')
+		}
+
 		const descripcion = req.body.descripcion.toUpperCase()
 
 		let query = 'UPDATE libros SET descripcion = ? WHERE id = ?'
 		let respuesta = await qy(query, [descripcion, req.params.id])
-
-		console.log(`Se modificaron correctamente los datos del libro`)
+		res.send('Se modifico correctamente la descripcion del libro')
 	} catch (e) {
 		console.error(e.message)
 		res.status(413).send(e.message)
