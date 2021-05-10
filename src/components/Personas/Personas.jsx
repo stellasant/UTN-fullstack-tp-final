@@ -1,22 +1,38 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useHistory } from 'react-router-dom'
+import { useHistory, useParams } from 'react-router-dom'
 import EditFormPersona from './EditFormPersona'
 import NewFormPersona from './NewFormPersona'
 import Errors from '../Message/Errors'
 
 const Personas = () => {
+	/*
+	 * TODO Personas:
+	 * - Alta => Agregar nueva Persona
+	 * - Modificación => Editar Persona
+	 * - Baja => Borrar Persona
+	 */
 	const [personas, setPersonas] = useState([])
 	const [error, setError] = useState([])
-	const [mostrarFormEdit, setmostrarFormEdit] = useState(false)
-	const [mostrarFormNew, setmostrarFormNew] = useState(false)
-	const [personaEditar, setPersonaEditar] = useState([])
+	const [showNewForm, setShowNewForm] = useState(false)
+	const [showEditForm, setShowEditForm] = useState(false)
+	const [personaEditar, setPersonaEditar] = useState([
+		{
+			nombre: '',
+			apellido: '',
+			alias: '',
+		},
+	])
 	const history = useHistory()
+	const params = useParams()
 
 	const traerPersonas = async () => {
 		await axios
 			.get('http://localhost:3001/api/personas')
-			.then((res) => setPersonas(res.data.respuesta))
+			.then(
+				(res) => setPersonas(res.data.respuesta),
+				(res) => console.log('setPersonas:', res.data.respuesta)
+			)
 			.catch((e) => setError(e.response.data))
 	}
 
@@ -27,16 +43,20 @@ const Personas = () => {
 	const handleEdit = async (id) => {
 		await axios
 			.get(`http://localhost:3001/api/personas/${id}`)
-			.then((res) => setPersonaEditar(res.data.respuesta))
+			.then(
+				(res) => setPersonaEditar(res.data.respuesta),
+				(res) => console.log('setPersonaEditar:', res.data.respuesta),
+				setShowEditForm(true)
+			)
 			.catch((e) => {
 				return setError([e.response.data])
 			})
-		setmostrarFormEdit(true)
 	}
 
 	useEffect(() => {
-		handleEdit()
-	}, [])
+		if (!params.id) return
+		handleEdit(params.id)
+	}, [params])
 
 	const handleDelete = async (id) => {
 		await axios
@@ -48,7 +68,7 @@ const Personas = () => {
 	return (
 		<div>
 			<h2>Listado de Personas</h2>
-			<button onClick={() => setmostrarFormNew(true)}>Agregar Persona</button>
+			<button onClick={() => setShowNewForm(true)}>Agregar Persona</button>
 			{error.length > 0 && <Errors msgError={error} />}
 			<table>
 				<thead>
@@ -79,8 +99,8 @@ const Personas = () => {
 				</tbody>
 			</table>
 
-			{mostrarFormEdit && <EditFormPersona personaEditar={personaEditar} />}
-			{mostrarFormNew && <NewFormPersona />}
+			{showEditForm && <EditFormPersona personaEditar={personaEditar} />}
+			{showNewForm && <NewFormPersona />}
 		</div>
 	)
 }

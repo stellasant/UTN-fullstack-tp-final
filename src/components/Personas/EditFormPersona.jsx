@@ -2,9 +2,11 @@ import React, { useState } from 'react'
 import axios from 'axios'
 import { useHistory } from 'react-router-dom'
 import Errors from '../Message/Errors'
+import PropTypes from 'prop-types'
 
-const EditFormPersona = ({ personaEditar }) => {
-	const [personaedit, setpersonaEdit] = useState({
+const EditFormPersona = (props) => {
+	const { personaEditar } = props
+	const [personaEdit, setpersonaEdit] = useState({
 		nombre: '',
 		apellido: '',
 		alias: '',
@@ -14,14 +16,14 @@ const EditFormPersona = ({ personaEditar }) => {
 
 	const handleChange = (e) => {
 		setpersonaEdit({
-			...personaedit,
+			...personaEdit,
 			[e.target.name]: e.target.value,
 		})
 	}
 
 	const handleSubmit = async (id) => {
 		await axios
-			.put(`http://localhost:3001/api/personas/${id}`, personaedit)
+			.put(`http://localhost:3001/api/personas/${id}`, personaEdit)
 			.then((res) => console.log(res), history.go(0))
 			.catch((e) => console.log(e))
 	}
@@ -34,21 +36,21 @@ const EditFormPersona = ({ personaEditar }) => {
 					<input
 						type='text'
 						name='nombre'
-						value={personaedit.nombre}
+						value={personaEdit.nombre}
 						onChange={handleChange}
 						placeholder='Nombre'
 					/>
 					<input
 						type='text'
 						name='apellido'
-						value={personaedit.apellido}
+						value={personaEdit.apellido}
 						onChange={handleChange}
 						placeholder='Apellido'
 					/>
 					<input
 						type='text'
 						name='alias'
-						value={personaedit.alias}
+						value={personaEdit.alias}
 						onChange={handleChange}
 						placeholder='Alias'
 					/>
@@ -60,3 +62,13 @@ const EditFormPersona = ({ personaEditar }) => {
 }
 
 export default EditFormPersona
+
+EditFormPersona.propTypes = {
+	personaEditar: PropTypes.oneOf([
+		{
+			nombre: PropTypes.node,
+			apellido: PropTypes.node,
+			alias: PropTypes.node,
+		},
+	]),
+}

@@ -30,10 +30,6 @@ const NewFormPersona = () => {
 			})
 	}
 
-	// useEffect(() => {
-	//      handleSubmit()
-	// }, [])
-
 	return (
 		<div>
 			<h2>Agrega una nueva Persona</h2>
