@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
-import { useHistory, useParams } from 'react-router-dom'
-import NewFormLibro from './NewFormLibro'
-import EditFormLibro from './EditFormLibro'
-import Errors from '../Message/Errors'
-import Success from '../Message/Success'
+import Swal from 'sweetalert2'
+import { useParams } from 'react-router-dom'
+import { NewFormLibro } from './NewFormLibro'
+import { EditFormLibro } from './EditFormLibro'
 
-export const Libros = () => {
+export const ListadoLibros = () => {
 	const [libros, setLibros] = useState([])
 
 	const [personaPrestar, setPersonaPrestar] = useState([])
@@ -23,12 +22,7 @@ export const Libros = () => {
 	])
 
 	const [categorias, setCategorias] = useState([])
-
-	const history = useHistory()
 	const params = useParams()
-	const [errorPrestar, setErrorPrestar] = useState('')
-	const [errors, setErrors] = useState('')
-	const [success, setSuccess] = useState('')
 
 	const TraerLibros = async () => {
 		try {
@@ -70,8 +64,12 @@ export const Libros = () => {
 	const handleDevolver = async (id) => {
 		await axios
 			.put(`http://localhost:3001/api/libros/devolver/${id}`)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setErrors(e.response.data))
+			.then((res) => {
+				Swal.fire('Devuelto!', `${res.data}`, 'success')
+			})
+			.catch((e) => {
+				Swal.fire('Ups! No se pudo Devolver', `${e.response.data}`, 'warning')
+			})
 	}
 
 	const handlePrestar = async (id) => {
@@ -82,7 +80,7 @@ export const Libros = () => {
 			setPersonaPrestar(personas.data.respuesta)
 			setSelectPersona(true)
 		} catch (e) {
-			setErrorPrestar(e.response.data)
+			console.log(e.response.data)
 		}
 	}
 
@@ -96,28 +94,47 @@ export const Libros = () => {
 				`http://localhost:3001/api/libros/prestar/${libroPrestar[0].id}`,
 				personaAPrestar
 			)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setErrorPrestar(e.response.data))
+			.then((res) => {
+				Swal.fire('Prestado!', `${res.data}`, 'success')
+			})
+			.catch((e) => {
+				Swal.fire('Ups! No se pudo Prestar', `${e.response.data}`, 'warning')
+			})
 	}
 
 	const handleDelete = async (id) => {
-		await axios
-			.delete(`http://localhost:3001/api/libros/${id}`)
-			.then((res) => console.log('handleDelete:', res), history.go(0))
-			.catch((e) => console.log(e))
+		Swal.fire({
+			title: '¿Estas seguro?',
+			text: 'Una vez eliminado no se puede recuperar',
+			icon: 'warning',
+			showCancelButton: true,
+			confirmButtonColor: '#3085d6',
+			cancelButtonColor: '#d33',
+			confirmButtonText: 'Si, Borrar!',
+			cancelButtonText: 'No, Cancelar',
+		}).then((result) => {
+			if (result.isConfirmed) {
+				deleteConfirm(id)
+			} else {
+				return
+			}
+		})
+	}
+
+	const deleteConfirm = async (id) => {
+		try {
+			await axios.delete(`http://localhost:3001/api/libros/${id}`)
+			Swal.fire('Eliminado!', 'El Libro fue eliminado correctamente', 'success')
+		} catch (e) {
+			Swal.fire('Ups! No se pudo Eliminar', `${e.response.data}`, 'warning')
+		}
 	}
 
 	const handleEdit = async (id) => {
 		await axios
 			.get(`http://localhost:3001/api/libros/${id}`)
-			.then(
-				(res) => setLibroEditar(res.data.respuesta),
-				(res) => console.log('setLibroEditar:', res.data.respuesta),
-				setShowEditForm(true)
-			)
-			.catch((e) => {
-				return setErrors(e.response.data)
-			})
+			.then((res) => setLibroEditar(res.data.respuesta), setShowEditForm(true))
+			.catch((e) => console.log(e))
 	}
 
 	useEffect(() => {
@@ -129,8 +146,6 @@ export const Libros = () => {
 		<div>
 			<h1>Libros:</h1>
 			<button onClick={() => setShowNewForm(true)}>Agregar un Libro</button>
-			{errors && <Errors msgError={errors} />}
-			{success && <Success msgSuccess={success} />}
 			<table>
 				<thead>
 					<tr>
@@ -175,7 +190,7 @@ export const Libros = () => {
 			{selectPersona && (
 				<>
 					<h4>Prestar a:</h4>
-					{errorPrestar && <Errors msgError={errorPrestar} />}
+
 					<select onChange={handleChangePrestar}>
 						<option selected disabled>
 							--Selecciona--

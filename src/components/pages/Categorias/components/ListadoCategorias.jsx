@@ -8,6 +8,7 @@ import Categorias from '../../../assets/categorias.svg'
 export const ListadoCategorias = () => {
 	const [categorias, setCategorias] = useState([])
 	const [showNewForm, setShowNewForm] = useState(false)
+	const [librosAsociados, setLibrosAsociados] = useState([])
 
 	const traerCategorias = async () => {
 		await axios
@@ -52,6 +53,30 @@ export const ListadoCategorias = () => {
 		}
 	}
 
+	const TraerLibrosAsociados = async () => {
+		try {
+			const traerCategorias = await axios.get(
+				'http://localhost:3001/api/categorias'
+			)
+			const traerLibros = await axios.get('http://localhost:3001/api/libros')
+
+			const newListado = traerLibros.data.respuesta.map((libro) => {
+				const categoriaAsociada = traerCategorias.data.respuesta.find(
+					(categoria) => categoria.id === libro.id_genero
+				)
+				libro.categoria = categoriaAsociada
+				return libro
+			})
+			setLibrosAsociados(newListado)
+		} catch (e) {
+			console.log(e)
+		}
+	}
+
+	useEffect(() => {
+		TraerLibrosAsociados()
+	}, [])
+
 	return (
 		<div>
 			<h1>Categorias:</h1>
@@ -83,6 +108,13 @@ export const ListadoCategorias = () => {
 							</Card.Header>
 							<Card.Body>
 								<Card.Item>Libros Asociados</Card.Item>
+								{librosAsociados &&
+									librosAsociados.map((item) => (
+										<div key={item.id}>
+											<div>{item.nombre}</div>
+											<div>{item.descripcion}</div>
+										</div>
+									))}
 							</Card.Body>
 							<Card.Footer>
 								<Card.Action onClick={() => handleDelete(categoria.id)}>

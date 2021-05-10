@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
+import PropTypes from 'prop-types'
 import axios from 'axios'
-import Errors from '../../common/Message/Errors'
-import Success from '../../common/Message/Success'
+import Swal from 'sweetalert2'
 
 export const NewFormLibro = (props) => {
 	const { categorias } = props
@@ -10,9 +10,6 @@ export const NewFormLibro = (props) => {
 		descripcion: '',
 		id_genero: '',
 	})
-
-	const [errors, setErrors] = useState('')
-	const [success, setSuccess] = useState('')
 
 	const handleChange = (e) => {
 		setNewlibro({
@@ -24,14 +21,16 @@ export const NewFormLibro = (props) => {
 	const handleSubmit = async () => {
 		await axios
 			.post('http://localhost:3001/api/libros', newLibro)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setErrors(e.response.data))
+			.then((res) => {
+				return Swal.fire('Agregado!', `${res.data}`, 'success')
+			})
+			.catch((e) => {
+				return Swal.fire('No se pudo Agregar!', `${e.response.data}`, 'warning')
+			})
 	}
 
 	return (
 		<div>
-			{errors && <Errors msgError={errors} />}
-			{success && <Success msgSuccess={success} />}
 			<label>Nombre</label>
 			<input
 				type='text'
@@ -59,4 +58,14 @@ export const NewFormLibro = (props) => {
 			<button onClick={handleSubmit}>Agregar Libro</button>
 		</div>
 	)
+}
+
+NewFormLibro.propTypes = {
+	newLibro: PropTypes.oneOf([
+		{
+			nombre: PropTypes.node,
+			descripcion: PropTypes.node,
+			id_genero: PropTypes.node,
+		},
+	]),
 }

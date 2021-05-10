@@ -1,16 +1,12 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import Errors from '../Message/Errors'
-import Success from '../Message/Success'
+import Swal from 'sweetalert2'
 
 export const EditFormLibro = (props) => {
 	const { libroEditar } = props
 	const [editLibro, setEditLibro] = useState({
 		descripcion: '',
 	})
-
-	const [errors, setErrors] = useState('')
-	const [success, setSuccess] = useState('')
 
 	const handleChange = (e) => {
 		setEditLibro({
@@ -22,14 +18,16 @@ export const EditFormLibro = (props) => {
 	const handleSubmit = async (id) => {
 		await axios
 			.put(`http://localhost:3001/api/libros/${id}`, editLibro)
-			.then((res) => setSuccess(res.data))
-			.catch((e) => setErrors(e.response.data))
+			.then((res) => {
+				return Swal.fire('Editado!', `${res.data}`, 'success')
+			})
+			.catch((e) => {
+				return Swal.fire('No se pudo Editar!', `${e.response.data}`, 'warning')
+			})
 	}
 
 	return (
 		<div>
-			{errors && <Errors msgError={errors} />}
-			{success && <Success msgSuccess={success} />}
 			{libroEditar.map((libro) => (
 				<>
 					<input
