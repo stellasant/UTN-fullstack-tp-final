@@ -159,6 +159,9 @@ const Libros = () => {
 						onChange={handleChangeNew}
 					></textarea>
 					<select name='id_genero' onChange={handleChangeNew}>
+						<option selected disabled>
+							--Selecciona--
+						</option>
 						{categorias.map((categoria) => (
 							<option key={categoria.id} value={categoria.id}>
 								{categoria.nombre}
@@ -213,15 +216,13 @@ const Libros = () => {
 				<>
 					<h4>Prestar a:</h4>
 					<select onChange={handleChangePrestar}>
+						<option selected disabled>
+							--Selecciona--
+						</option>
 						{personaPrestar.map((persona) => (
-							<>
-								<option selected disabled>
-									--Selecciona--
-								</option>
-								<option key={persona.id} value={persona.id}>
-									{persona.nombre}
-								</option>
-							</>
+							<option key={persona.id} value={persona.id}>
+								{persona.nombre}
+							</option>
 						))}
 					</select>
 					<button onClick={handleSubmitPrestar}>Prestar Libro</button>
