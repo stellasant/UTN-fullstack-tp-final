@@ -2,12 +2,15 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useParams } from 'react-router-dom'
-import { GridCards, Card } from '../../../common/Card'
-import { Section } from '../../../common/Section'
-import Libros from '../../../assets/libros.svg'
-import { EditFormLibro } from './EditFormLibro'
+import { GridCards, Card } from '../../common/Card'
+import { Section } from '../../common/Section'
+import LibrosIcon from '../../assets/libros.svg'
+import { EditFormLibro } from './components/EditFormLibro'
+import { FormWrapper, WrapperInput, ButtonsWrapper } from '../../common/Form'
+import { Titulo } from '../../common/Titulo'
+import { ActionsSection, AddButton } from '../../common/ActionsSection'
 
-export const ListadoLibros = () => {
+export const Libros = () => {
 	const [libros, setLibros] = useState([])
 
 	const [personaPrestar, setPersonaPrestar] = useState([])
@@ -29,6 +32,30 @@ export const ListadoLibros = () => {
 		},
 	])
 	const params = useParams()
+
+	const [newLibro, setNewlibro] = useState({
+		nombre: '',
+		descripcion: '',
+		id_genero: '',
+	})
+
+	const handleChange = (e) => {
+		setNewlibro({
+			...newLibro,
+			[e.target.name]: e.target.value,
+		})
+	}
+
+	const handleSubmit = async () => {
+		await axios
+			.post('http://localhost:3001/api/libros', newLibro)
+			.then((res) => {
+				return Swal.fire('Agregado!', `${res.data}`, 'success')
+			})
+			.catch((e) => {
+				return Swal.fire('No se pudo Agregar!', `${e.response.data}`, 'warning')
+			})
+	}
 
 	const TraerLibros = async () => {
 		try {
@@ -149,40 +176,87 @@ export const ListadoLibros = () => {
 	}, [params])
 
 	return (
-		<div>
-			{selectPersona && (
-				<>
-					<h4>Prestar a:</h4>
-
-					<select onChange={handleChangePrestar}>
-						<option selected disabled>
-							--Selecciona--
-						</option>
-						{personaPrestar.map((persona) => (
-							<option key={persona.id} value={persona.id}>
-								{persona.nombre}
-							</option>
-						))}
-					</select>
-					<button onClick={handleSubmitPrestar}>Prestar Libro</button>
-				</>
+		<>
+			{showNewForm && (
+				<Section className='section-form'>
+					<FormWrapper>
+						<h3>Agrega un nuevo Libro</h3>
+						<WrapperInput>
+							<label htmlFor='nombre'>Nombre</label>
+							<input
+								type='text'
+								name='nombre'
+								value={newLibro.nombre}
+								onChange={handleChange}
+								required
+							/>
+						</WrapperInput>
+						<WrapperInput>
+							<label htmlFor='descripcion'>Descripción</label>
+							<input
+								type='text'
+								name='descripcion'
+								value={newLibro.descripcion}
+								onChange={handleChange}
+								required
+							/>
+						</WrapperInput>
+						<WrapperInput>
+							<label htmlFor='categoria'>Seleccionar Categoría</label>
+							<select name='categoria' onChange={handleChange}>
+								<option selected disabled>
+									--Selecciona--
+								</option>
+								{categorias.map((categoria) => (
+									<option key={categoria.id} value={categoria.id}>
+										{categoria.nombre}
+									</option>
+								))}
+							</select>
+						</WrapperInput>
+						<ButtonsWrapper>
+							<button
+								className='button-primary'
+								onClick={handleSubmit}
+								disabled={
+									!newLibro.nombre ||
+									!newLibro.descripcion ||
+									!newLibro.categoria
+								}
+							>
+								Agregar
+							</button>
+							<button className='button-secondary' onClick={setShowNewForm}>
+								Cancelar
+							</button>
+						</ButtonsWrapper>
+					</FormWrapper>
+				</Section>
 			)}
-
-			<>
-				{showEditForm && (
-					<Section className='section-form'>
-						<EditFormLibro
-							libroEditar={libroEditar}
-							onClose={() => setShowEditForm(false)}
-						/>
-					</Section>
-				)}
+			{showEditForm && (
+				<Section className='section-form'>
+					<EditFormLibro
+						libroEditar={libroEditar}
+						onClose={() => setShowEditForm(false)}
+					/>
+				</Section>
+			)}
+			<Titulo nombre='Libros' />
+			<Section>
+				<ActionsSection>
+					<h2>Listado de Libros en Biblioteca</h2>
+					<AddButton onClick={() => setShowNewForm(true)}>
+						Agregar Libro
+					</AddButton>
+				</ActionsSection>
+			</Section>
+			<Section>
 				<GridCards>
 					{libros &&
 						libros.map((libro) => (
 							<Card.Wrapper key={libro.id}>
 								<Card.Header>
-									<Card.Image src={Libros} alt='personas-icon' />
+									<Card.Image src={LibrosIcon} alt='personas-icon' />
 									<div>
 										<Card.Value>{libro.nombre}</Card.Value>
 										<Card.Label>ID {libro.id}</Card.Label>
@@ -248,7 +322,7 @@ export const ListadoLibros = () => {
 							</Card.Wrapper>
 						))}
 				</GridCards>
-			</>
-		</div>
+			</Section>
+		</>
 	)
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
+import { FormWrapper, WrapperInput, ButtonsWrapper } from '../../../common/Form'
 
 export const EditFormLibro = (props) => {
 	const { libroEditar } = props
@@ -27,20 +28,30 @@ export const EditFormLibro = (props) => {
 	}
 
 	return (
-		<div>
+		<FormWrapper>
 			{libroEditar.map((libro) => (
 				<>
-					<input
-						type='text'
-						name='descripcion'
-						value={editLibro.descripcion}
-						onChange={handleChange}
-						placeholder='Descripcion'
-						key={editLibro.id}
-					/>
-					<button onClick={() => handleSubmit(libro.id)}>Editar</button>
+					<WrapperInput>
+						<input
+							type='text'
+							name='descripcion'
+							value={editLibro.descripcion}
+							onChange={handleChange}
+							placeholder='Descripcion'
+							key={editLibro.id}
+						/>
+					</WrapperInput>
+					<ButtonsWrapper>
+						<button
+							className='button-primary'
+							disabled={!editLibro.descripcion}
+							onClick={() => handleSubmit(libro.id)}
+						>
+							Editar
+						</button>
+					</ButtonsWrapper>
 				</>
 			))}
-		</div>
+		</FormWrapper>
 	)
 }
