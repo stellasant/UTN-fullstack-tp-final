@@ -58,15 +58,17 @@ export const ListadoCategorias = () => {
 			)
 			const traerLibros = await axios.get('http://localhost:3001/api/libros')
 
-			const newListado = traerLibros.data.respuesta.map((libro) => {
-				const categoriaAsociada = traerCategorias.data.respuesta.find(
-					(categoria) => categoria.id === libro.id_genero
+			const newListado = traerCategorias.data.respuesta.map((categoria) => {
+				const libroAsociado = traerLibros.data.respuesta.filter(
+					(libro) => libro.id_genero === categoria.id
 				)
-				libro.categoria = categoriaAsociada
-				return libro
+				categoria.libro = libroAsociado
+				console.log(categoria)
+				return categoria
 			})
-			console.log(newListado)
+
 			setLibrosAsociados(newListado)
+			console.log(newListado)
 		} catch (e) {
 			console.log(e)
 		}
@@ -93,8 +95,10 @@ export const ListadoCategorias = () => {
 							{librosAsociados &&
 								librosAsociados.map((item) => (
 									<div key={item.id}>
-										<div>{item.nombre}</div>
-										<div>{item.descripcion}</div>
+										<h1>{item.nombre}</h1>
+										{item.libro.map((libro) => (
+											<p key={libro.id}>{libro.nombre}</p>
+										))}
 									</div>
 								))}
 						</Card.Body>
