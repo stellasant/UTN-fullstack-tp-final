@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
 import { useParams } from 'react-router-dom'
-import { NewFormLibro } from './NewFormLibro'
+import { GridCards, Card } from '../../../common/Card'
+import { Section } from '../../../common/Section'
+import Libros from '../../../assets/libros.svg'
 import { EditFormLibro } from './EditFormLibro'
 
 export const ListadoLibros = () => {
@@ -21,7 +23,11 @@ export const ListadoLibros = () => {
 		},
 	])
 
-	const [categorias, setCategorias] = useState([])
+	const [categorias, setCategorias] = useState([
+		{
+			nombre: '',
+		},
+	])
 	const params = useParams()
 
 	const TraerLibros = async () => {
@@ -144,49 +150,6 @@ export const ListadoLibros = () => {
 
 	return (
 		<div>
-			<h1>Libros:</h1>
-			<button onClick={() => setShowNewForm(true)}>Agregar un Libro</button>
-			<table>
-				<thead>
-					<tr>
-						<th>Nombre</th>
-						<th>Descripcion</th>
-						<th>Genero</th>
-						<th>Prestado?</th>
-						<th>Acciones</th>
-						<th></th>
-					</tr>
-				</thead>
-				<tbody>
-					{libros &&
-						libros.map((libro) => (
-							<tr key={libro.id}>
-								<td>{libro.nombre}</td>
-								<td>{libro.descripcion}</td>
-								<td>{libro.categoria.nombre}</td>
-								{libro.persona ? (
-									<td>
-										{libro.persona.nombre} {libro.persona.apellido}
-									</td>
-								) : (
-									<td>No</td>
-								)}
-								<td>
-									<button onClick={() => handleDevolver(libro.id)}>
-										Devolver
-									</button>
-									<button onClick={() => handlePrestar(libro.id)}>
-										Prestar
-									</button>
-									<button onClick={() => handleDelete(libro.id)}>
-										Eliminar
-									</button>
-									<button onClick={() => handleEdit(libro.id)}>Editar</button>
-								</td>
-							</tr>
-						))}
-				</tbody>
-			</table>
 			{selectPersona && (
 				<>
 					<h4>Prestar a:</h4>
@@ -204,8 +167,88 @@ export const ListadoLibros = () => {
 					<button onClick={handleSubmitPrestar}>Prestar Libro</button>
 				</>
 			)}
-			{showNewForm && <NewFormLibro categorias={categorias} />}
-			{showEditForm && <EditFormLibro libroEditar={libroEditar} />}
+
+			<>
+				{showEditForm && (
+					<Section className='section-form'>
+						<EditFormLibro
+							libroEditar={libroEditar}
+							onClose={() => setShowEditForm(false)}
+						/>
+					</Section>
+				)}
+				<GridCards>
+					{libros &&
+						libros.map((libro) => (
+							<Card.Wrapper key={libro.id}>
+								<Card.Header>
+									<Card.Image src={Libros} alt='personas-icon' />
+									<div>
+										<Card.Value>{libro.nombre}</Card.Value>
+										<Card.Label>ID {libro.id}</Card.Label>
+									</div>
+								</Card.Header>
+								<Card.Body>
+									<Card.Item>
+										<Card.Label>Descripción</Card.Label>
+										<Card.Value>{libro.descripcion}</Card.Value>
+									</Card.Item>
+									<Card.Item>
+										<Card.Label>Categoría</Card.Label>
+										<Card.Value>{libro.categoria.nombre}</Card.Value>
+									</Card.Item>
+									<Card.Item>
+										<Card.Label>Prestado?</Card.Label>
+										<Card.Value>
+											{libro.persona
+												? libro.persona.nombre + libro.persona.apellido
+												: 'No'}
+										</Card.Value>
+									</Card.Item>
+									{selectPersona && (
+										<Card.Item>
+											<Card.Label>Prestar a?</Card.Label>
+
+											<select onChange={handleChangePrestar}>
+												<option selected disabled>
+													--Selecciona--
+												</option>
+												{personaPrestar.map((persona) => (
+													<option key={persona.id} value={persona.id}>
+														{persona.nombre}
+													</option>
+												))}
+											</select>
+											<Card.Action onClick={handleSubmitPrestar}>
+												Prestar Libro
+											</Card.Action>
+										</Card.Item>
+									)}
+								</Card.Body>
+								<Card.Footer>
+									<Card.Action
+										onClick={() => handlePrestar(libro.id)}
+										disabled={libro.persona}
+									>
+										Prestar
+									</Card.Action>
+									<Card.Action
+										onClick={() => handleDevolver(libro.id)}
+										disabled={!libro.persona}
+									>
+										Devolver
+									</Card.Action>
+									<Card.Action onClick={() => handleEdit(libro.id)}>
+										Editar
+									</Card.Action>
+									<Card.Action onClick={() => handleDelete(libro.id)}>
+										Eliminar
+									</Card.Action>
+								</Card.Footer>
+							</Card.Wrapper>
+						))}
+				</GridCards>
+			</>
 		</div>
 	)
 }

@@ -99,6 +99,15 @@ button {
 		&:hover {
 			background: #8f1800;
 		}
+		&:disabled {
+			cursor: not-allowed;
+			filter: saturate(25%);
+			&:hover {
+				background: #bf2000;
+				filter: saturate(25%);
+				cursor: not-allowed;
+			}
+		}
 	}
 	&.button-secondary {
 		color: #bf2000;
@@ -111,15 +120,18 @@ button {
 			color: #b41e00;
 			background: transparent;
 		}
-	}
-
-	&:disabled {
-		cursor: not-allowed;
-		filter: saturate(25%);
-		&:hover {
-			background: #bf2000;
-			filter: saturate(25%);
+		&:disabled {
 			cursor: not-allowed;
+			filter: saturate(10%);
+			color: #b41e00;
+			filter: saturate(20%);
+
+			&:hover {
+				background: transparent;
+				color: #b41e00;
+				filter: saturate(20%);
+				cursor: not-allowed;
+			}
 		}
 	}
 }

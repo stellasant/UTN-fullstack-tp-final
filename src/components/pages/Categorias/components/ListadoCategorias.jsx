@@ -1,13 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import axios from 'axios'
 import Swal from 'sweetalert2'
-import { NewFormCategoria } from './NewFormCategoria'
 import { GridCards, Card } from '../../../common/Card'
 import Categorias from '../../../assets/categorias.svg'
 
 export const ListadoCategorias = () => {
 	const [categorias, setCategorias] = useState([])
-	const [showNewForm, setShowNewForm] = useState(false)
 	const [librosAsociados, setLibrosAsociados] = useState([])
 
 	const traerCategorias = async () => {
@@ -67,6 +65,7 @@ export const ListadoCategorias = () => {
 				libro.categoria = categoriaAsociada
 				return libro
 			})
+			console.log(newListado)
 			setLibrosAsociados(newListado)
 		} catch (e) {
 			console.log(e)
@@ -78,52 +77,34 @@ export const ListadoCategorias = () => {
 	}, [])
 
 	return (
-		<div>
-			<h1>Categorias:</h1>
-			<button onClick={() => setShowNewForm(true)}>Agrega una categoria</button>
+		<GridCards>
 			{categorias &&
 				categorias.map((categoria) => (
-					<div key={categoria.id} className='categoria'>
-						<h3>
-							{categoria.nombre}
-							<button onClick={() => handleDelete(categoria.id)}>
+					<Card.Wrapper key={categoria.id}>
+						<Card.Header>
+							<Card.Image src={Categorias} alt='categorias-icon' />
+							<div>
+								<Card.Value>{categoria.nombre}</Card.Value>
+								<Card.Label>ID {categoria.id}</Card.Label>
+							</div>
+						</Card.Header>
+						<Card.Body>
+							<Card.Item>Libros Asociados</Card.Item>
+							{librosAsociados &&
+								librosAsociados.map((item) => (
+									<div key={item.id}>
+										<div>{item.nombre}</div>
+										<div>{item.descripcion}</div>
+									</div>
+								))}
+						</Card.Body>
+						<Card.Footer>
+							<Card.Action onClick={() => handleDelete(categoria.id)}>
 								Eliminar
-							</button>
-						</h3>
-					</div>
+							</Card.Action>
+						</Card.Footer>
+					</Card.Wrapper>
 				))}
-
-			{showNewForm && <NewFormCategoria />}
-
-			<GridCards>
-				{categorias &&
-					categorias.map((categoria) => (
-						<Card.Wrapper key={categoria.id}>
-							<Card.Header>
-								<Card.Image src={Categorias} alt='categorias-icon' />
-								<div>
-									<Card.Value>{categoria.nombre}</Card.Value>
-									<Card.Label>ID {categoria.id}</Card.Label>
-								</div>
-							</Card.Header>
-							<Card.Body>
-								<Card.Item>Libros Asociados</Card.Item>
-								{librosAsociados &&
-									librosAsociados.map((item) => (
-										<div key={item.id}>
-											<div>{item.nombre}</div>
-											<div>{item.descripcion}</div>
-										</div>
-									))}
-							</Card.Body>
-							<Card.Footer>
-								<Card.Action onClick={() => handleDelete(categoria.id)}>
-									Eliminar
-								</Card.Action>
-							</Card.Footer>
-						</Card.Wrapper>
-					))}
-			</GridCards>
-		</div>
+		</GridCards>
 	)
 }

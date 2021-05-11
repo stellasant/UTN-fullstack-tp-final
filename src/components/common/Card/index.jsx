@@ -78,6 +78,19 @@ export const Action = styled.button`
 	&:hover {
 		color: #b41e00 !important;
 	}
+	&:disabled {
+		cursor: not-allowed;
+		filter: saturate(10%);
+		color: #b41e00;
+		filter: saturate(20%);
+
+		&:hover {
+			background: transparent;
+			color: #b41e00;
+			filter: saturate(20%);
+			cursor: not-allowed;
+		}
+	}
 `
 
 export const Card = {
