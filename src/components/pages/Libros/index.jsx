@@ -251,6 +251,27 @@ export const Libros = () => {
 				</ActionsSection>
 			</Section>
 			<Section>
+				<FormWrapper>
+					{selectPersona && (
+						<Card.Item>
+							<Card.Label>Prestar a?</Card.Label>
+
+							<select onChange={handleChangePrestar}>
+								<option selected disabled>
+									--Selecciona--
+								</option>
+								{personaPrestar.map((persona) => (
+									<option key={persona.id} value={persona.id}>
+										{persona.nombre}
+									</option>
+								))}
+							</select>
+							<Card.Action onClick={handleSubmitPrestar}>
+								Prestar Libro
+							</Card.Action>
+						</Card.Item>
+					)}
+				</FormWrapper>
 				<GridCards>
 					{libros &&
 						libros.map((libro) => (
@@ -279,25 +300,6 @@ export const Libros = () => {
 												: 'No'}
 										</Card.Value>
 									</Card.Item>
-									{selectPersona && (
-										<Card.Item>
-											<Card.Label>Prestar a?</Card.Label>
-
-											<select onChange={handleChangePrestar}>
-												<option selected disabled>
-													--Selecciona--
-												</option>
-												{personaPrestar.map((persona) => (
-													<option key={persona.id} value={persona.id}>
-														{persona.nombre}
-													</option>
-												))}
-											</select>
-											<Card.Action onClick={handleSubmitPrestar}>
-												Prestar Libro
-											</Card.Action>
-										</Card.Item>
-									)}
 								</Card.Body>
 								<Card.Footer>
 									<Card.Action
