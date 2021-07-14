@@ -31,5 +31,9 @@ FE ReactJS app to manage a user library with CRUD actions by making queries to a
 ## Demo
 
 
-https://user-images.githubusercontent.com/59258811/125592658-94028f7e-5d1a-4d52-8c25-7bfcad6332c9.mov
+
+https://user-images.githubusercontent.com/59258811/125593922-52f417d5-4d0e-49e6-8941-b3d570749b95.mp4
+
+
+
 
